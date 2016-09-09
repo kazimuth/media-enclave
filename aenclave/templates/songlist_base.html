@@ -1,0 +1,215 @@
+{% extends "aenclave/header_base.html" %}
+{% load aenclave %}
+{% load bundler_tags %}
+
+{% block styles %}{{block.super}}
+  {% css "aenclave-styles" "songlist.css" %}
+  {% css "aenclave-styles" "clickmenu.css" %}
+{% endblock %}
+
+{% block scripts %}{{block.super}}
+  {% javascript "aenclave-scripts" "jquery.tablednd_0_5.js" %}
+  {% javascript "aenclave-scripts" "jquery.clickmenu.js" %}
+  {% javascript "aenclave-scripts" "jquery.columnmanager.js" %}
+  {% javascript "aenclave-scripts" "tablesort.js" %}
+  {% javascript "aenclave-scripts" "songlist.js" %}
+  {% defer %}
+  <script>
+    {% if sort %}
+    jQuery(document).ready(function() {
+      var sort_key = '{{ sort }}';
+      var order = 'asc';
+      if (sort_key.substr(0, 1) == '-') {
+        order = 'desc';
+        sort_key = sort_key.substr(1);
+      }
+
+      var sort_column = jQuery('.sort').filter('.' + sort_key);
+      if (sort_column.length == 1) {
+        songlist.sort_column(sort_column, order);
+      }
+    });
+    {% endif %}
+  </script>
+  {% enddefer %}
+{% endblock %}
+
+{% block content %}
+  {% block presonglist %}{% endblock %}
+  {% if song_list or current_song or show_songlist %}
+    <table class="data" id="songlist">
+      <thead>
+        <tr>
+          <th class="triangleselect"></th>
+          <th class="select">
+            <input id="checkall" type="checkbox" onclick="songlist.select_all(this);"/>
+          </th>
+          {% if user.is_authenticated %}
+            <th width="16">
+              <div class="aenclave-sprites aenclave-sprites-heart-png"></div>
+            </th>
+          {% endif %}
+          {% if current_song %}
+            <th class="track">#</th>
+            <th class="title">Title</th>
+            <th class="album">Album</th>
+            <th class="artist">Artist</th>
+            <th class="time">Time</th>
+            <th class="play-count">P#</th>
+            <th class="skip-count">S#</th>
+            <th class="last-played">Last played</th>
+            <th class="date-added">Date added</th>
+          {% else %}
+            <th class="sort track" sorttype="int" onclick="tablesort.sorta(this);">#</th>
+            <th class="sort title" sorttype="text" onclick="tablesort.sorta(this);">Title</th>
+            <th class="sort album" sorttype="text" onclick="tablesort.sorta(this);">Album</th>
+            <th class="sort artist" sorttype="text" onclick="tablesort.sorta(this);">Artist</th>
+            <th class="sort time" sorttype="time" onclick="tablesort.sorta(this);">Time</th>
+            <th class="sort play-count" sorttype="int" onclick="tablesort.sorta(this);">P#</th>
+            <th class="sort skip-count" sorttype="int" onclick="tablesort.sorta(this);">S#</th>
+            <th class="sort last-played" sorttype="date" onclick="tablesort.sorta(this);">Last played</th>
+            <th class="sort date-added" sorttype="date" onclick="tablesort.sorta(this);">Date added</th>
+          {% endif %}
+          {% if user.is_authenticated %}
+            <th class="edit">
+              <div class="aenclave-sprites aenclave-sprites-edit-png"></div>
+            </th>
+          {% endif %}
+          {% if dl %}
+            <th class="dl">
+              <div class="aenclave-sprites aenclave-sprites-dl-png"></div>
+            </th>
+          {% endif %}
+          {% if allow_dragging %}
+            <th class="drag">
+              <div class="aenclave-sprites aenclave-sprites-updown-png"></div>
+            </th>
+          {% endif %}
+          <th class="col-picker">
+            <ul id="ul-select-col">
+              <li>
+                <span class="aenclave-sprites aenclave-sprites-selectcol-png">
+                  &nbsp;</span>
+                <ul id="col-list"></ul>
+              </li>
+            </ul>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% if current_song.noise %}
+          <tr class="c">
+            <td class="c">
+              <div class="aenclave-sprites aenclave-sprites-speaker-png">
+                &nbsp;</div>
+            </td>
+            <td class="c" colspan="11">(Dequeuing current song...)</td>
+          </tr>
+        {% else %}
+          {% if current_song %}
+            <tr class="c">
+              {% with current_song as song %}
+                {% with "true" as current %}
+                {% include "aenclave/songlist_song_row.html" %}
+              {% endwith %}
+            {% endwith %}
+            </tr>
+          {% endif %}
+        {% endif %}
+        {% for song in song_list %}
+          <tr class="{% cycle a,b %}">
+            {% include "aenclave/songlist_song_row.html" %}
+          </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+  {% endif %}
+
+  {% block postsonglist %}{% endblock %}
+{% endblock %}
+
+{% block postcopyright %}
+  {% if song_list or force_actions_bar %}
+    <div id="actionsgap"></div>
+
+    <div id="actions">
+      {% block actions %}
+        {% if song_list or show_songlist %}
+          {% if not no_queuing %}
+            <a href="javascript:songlist.queue();">
+              <div class="aenclave-sprites aenclave-sprites-speaker-png"></div>
+              Queue selected songs</a>
+          {% endif %}
+          <span class="random-control">
+            choose
+            <select id="select_sample_size">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option selected="selected">5</option>
+              <option>6</option>
+              <option>7</option>
+              <option>8</option>
+              <option>9</option>
+              <option>10</option>
+              <option>...</option>
+            </select>
+            random songs:
+            <input id="random_button" type="button" value="Go"
+                onclick="songlist.select_random()"/>
+          </span>
+          {% if dl %}
+            <a href="javascript:songlist.dl();">
+              <div class="aenclave-sprites aenclave-sprites-dl-png"></div>
+              DL selected songs</a>
+          {% endif %}
+          {% if user.is_authenticated %}
+            <a href="javascript:songlist.askcreate();">
+              <div class="aenclave-sprites aenclave-sprites-create-png"></div>
+              Save as playlist&hellip;</a>
+            <a href="javascript:songlist.askadd();">
+              <div class="aenclave-sprites aenclave-sprites-add-png"></div>
+              Add to playlist&hellip;</a>
+            {% if user.is_staff %}
+              <a href="javascript:songlist.delete_();">
+                <div class="aenclave-sprites aenclave-sprites-delete-png"></div>
+                Delete selected songs</a>
+            {% else %}
+              <a href="javascript:songlist.askdelete();">
+                <div class="aenclave-sprites aenclave-sprites-delete-png"></div>
+                Request for deletion</a>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endblock %}
+    </div>
+
+    <div id="subactions"></div>
+
+    {# Forms that get submitted by Javascript. #}
+    {% if not no_queuing %}
+      <form name="queueform" action="{% url aenclave-queue-songs %}" method="POST">
+        <input type="hidden" name="ids"/>
+      </form>
+    {% endif %}
+      <form name="dlform" action="{% url aenclave-dl %}" method="POST">
+        <input type="hidden" name="ids"/>
+      </form>
+    {% if user.is_authenticated %}
+      <form name="createform" action="{% url aenclave-playlist-create %}" method="POST">
+        <input type="hidden" name="name"/>
+        <input type="hidden" name="ids"/>
+      </form>
+      <form name="addform" action="{% url aenclave-playlist-add %}" method="POST">
+        <input type="hidden" name="pid"/>
+        <input type="hidden" name="ids"/>
+      </form>
+    {% endif %}
+    <form name="deleteform" action="{% url aenclave-delete-songs %}" method="POST">
+      <input type="hidden" name="ids"/>
+    </form>
+  {% endif %}
+{% endblock %}

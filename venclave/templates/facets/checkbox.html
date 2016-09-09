@@ -1,0 +1,14 @@
+{% extends "venclave/facets/facet_base.html" %}
+
+{% block facet-type %}
+checkbox
+{% endblock %}
+
+{% block choices %}
+  {% for value,label in attribute.get_choices %}
+    <input type="checkbox" value="{{ value }}" id="{{ attribute.name }}{{ forloop.counter0 }}" />
+    <label for="{{ attribute.name }}{{ forloop.counter0 }}">{{ label }}</label>
+    <br />
+  {% endfor %}
+
+{% endblock choices %}

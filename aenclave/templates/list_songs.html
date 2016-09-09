@@ -1,0 +1,10 @@
+{% extends "aenclave/songlist_base.html" %}
+{% load humanize %}
+
+{% block title %}{{block.super}}{% if title %}{{ title }}{% else %}List Songs{% endif %}{% endblock %}
+
+{% block header %}{% if title %}{{ title }}{% else %}List Songs{% endif %}{% endblock %}
+
+{% block presonglist %}
+  <p>Listing {{song_list|length|apnumber|intcomma}} songs.</p>
+{% endblock %}

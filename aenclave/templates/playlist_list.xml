@@ -1,0 +1,5 @@
+<playlists>
+  {% for playlist in playlist_list %}
+    <playlist pid="{{playlist.id}}" owner="{{playlist.owner.username}}">{{playlist.name|escape}}</playlist>
+  {% endfor %}
+</playlists>

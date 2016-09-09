@@ -1,0 +1,20 @@
+{% extends "aenclave/songlist_base.html" %}
+{% load bundler_tags %}
+{% load humanize %}
+
+{% block title %}{{block.super}} HTTP Upload{% endblock %}
+
+{% block header %}HTTP Upload{% endblock %}
+
+{% block styles %}{{block.super}}
+  {% css "aenclave-styles" "upload.css" %}
+{% endblock %}
+
+{% block presonglist %}
+  {% if sketchy_upload %}
+    <p class="warning"><span>This file looks pretty sketchy; it might not be a
+        valid MP3.&nbsp; If it doesn&rsquo;t play correctly, please request it
+        for deletion.</span></p>
+  {% endif %}
+  <p>The following song has been added to the database:</p>
+{% endblock %}

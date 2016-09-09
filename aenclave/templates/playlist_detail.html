@@ -1,0 +1,87 @@
+{% extends "aenclave/songlist_base.html" %}
+{% load bundler_tags %}
+{% load humanize %}
+
+{% block title %}{{block.super}} Playlist Detail{% endblock %}
+
+{% block header %}Playlist Detail{% endblock %}
+
+{% block styles %}{{block.super}}
+  {% css "aenclave-styles" "playlist.css" %}
+{% endblock %}
+
+{% block scripts %}{{block.super}}
+  {% javascript "aenclave-scripts" "playlist.js" %}
+  {% defer %}
+    <script type="text/javascript">
+      playlist.id = {{playlist.id}};
+      {% if allow_edit %}  {# Should be a better idiom. #}
+        playlist.allow_edit = true;
+      {% else %}
+        playlist.allow_edit = false;
+      {% endif %}
+      $(document).ready(function() {
+        songlist.enable_dnd(playlist.save);
+      });
+    </script>
+  {% enddefer %}
+{% endblock %}
+
+{% block presonglist %}
+  <div id="plisthead">
+    <span>{{playlist.name}}</span> &mdash;
+    {{song_list|length|intcomma}} song{{song_list|length|pluralize}} &mdash;
+    [<a href="{% url aenclave-user-playlist playlist.owner.username %}"><tt>{{playlist.owner.username}}</tt></a>{% if playlist.group %} / {{playlist.group.name}}{% endif %}]
+    {% if allow_edit %}
+      <br/>
+      <form id="group_choice_form" method="post"
+          action="/audio/playlists/edit_group/{{playlist.id}}/">
+        Group that can edit:
+        <select name="group">
+          <option value="">not group editable</option>
+          {% for group in groups %}
+            <option
+                {% ifequal group playlist.group %}
+                  selected="selected"
+                {% endifequal %}
+                value="{{group.id}}">{{group.name}}</option>
+          {% endfor %}
+        </select>
+        <input type="submit" value="Go"/>
+      </form>
+      You can reorder the playlist order by dragging the blue up/down triangles.
+    {% endif %}
+  </div>
+  {% if not song_list %}
+    <p>This playlist is empty.</p>
+  {% endif %}
+{% endblock %}
+
+{% block actions %}{{block.super}}
+  {% if allow_edit and song_list %}
+    <a href="javascript:playlist.remove();">
+      <div class="aenclave-sprites aenclave-sprites-remove-png"></div>
+      Remove selected songs</a>
+  {% endif %}
+  {% if allow_cede %}
+    <a href="javascript:playlist.askdel();">
+      <div class="aenclave-sprites aenclave-sprites-delete-png"></div>
+      Delete playlist&hellip;</a>
+  {% endif %}
+{% endblock %}
+
+{% block postcopyright %}{{block.super}}
+  {% if allow_edit %}
+    <form name="removeform" action="{% url aenclave-playlist-remove %}"
+        method="POST">
+      <input type="hidden" name="pid" value="{{playlist.id}}"/>
+      <input type="hidden" name="ids"/>
+    </form>
+  {% endif %}
+  {% if allow_cede %}
+    <form name="playlistdeleteform" action="{% url aenclave-playlist-delete %}"
+        method="POST">
+      <input type="hidden" name="pid" value="{{playlist.id}}"/>
+    </form>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "aenclave/header_base.html" %}
+{% load bundler_tags %}
+
+{% block title %}{{block.super}} Browser Index{% endblock %}
+
+{% block header %}Browser Index{% endblock %}
+
+{% block styles %}{{block.super}}
+  {% css "aenclave-styles" "browse.css" %}
+{% endblock %}
+
+{% block content %}
+  <table class="index">
+    <thead>
+      <tr>
+        <th colspan="3">Albums</th>
+        <td class="spacer"></td>
+        <th colspan="3">Artists</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="albums/~/">#</a></td>
+        <td><a href="albums/A/">A</a></td>
+        <td><a href="albums/B/">B</a></td>
+        <td class="spacer"></td>
+        <td><a href="artists/~/">#</a></td>
+        <td><a href="artists/A/">A</a></td>
+        <td><a href="artists/B/">B</a></td>
+      </tr>
+      <tr>
+        <td><a href="albums/C/">C</a></td>
+        <td><a href="albums/D/">D</a></td>
+        <td><a href="albums/E/">E</a></td>
+        <td class="spacer"></td>
+        <td><a href="artists/C/">C</a></td>
+        <td><a href="artists/D/">D</a></td>
+        <td><a href="artists/E/">E</a></td>
+      </tr>
+      <tr>
+        <td><a href="albums/F/">F</a></td>
+        <td><a href="albums/G/">G</a></td>
+        <td><a href="albums/H/">H</a></td>
+        <td class="spacer"></td>
+        <td><a href="artists/F/">F</a></td>
+        <td><a href="artists/G/">G</a></td>
+        <td><a href="artists/H/">H</a></td>
+      </tr>
+      <tr>
+        <td><a href="albums/I/">I</a></td>
+        <td><a href="albums/J/">J</a></td>
+        <td><a href="albums/K/">K</a></td>
+        <td class="spacer"></td>
+        <td><a href="artists/I/">I</a></td>
+        <td><a href="artists/J/">J</a></td>
+        <td><a href="artists/K/">K</a></td>
+      </tr>
+      <tr>
+        <td><a href="albums/L/">L</a></td>
+        <td><a href="albums/M/">M</a></td>
+        <td><a href="albums/N/">N</a></td>
+        <td class="spacer"></td>
+        <td><a href="artists/L/">L</a></td>
+        <td><a href="artists/M/">M</a></td>
+        <td><a href="artists/N/">N</a></td>
+      </tr>
+      <tr>
+        <td><a href="albums/O/">O</a></td>
+        <td><a href="albums/P/">P</a></td>
+        <td><a href="albums/Q/">Q</a></td>
+        <td class="spacer"></td>
+        <td><a href="artists/O/">O</a></td>
+        <td><a href="artists/P/">P</a></td>
+        <td><a href="artists/Q/">Q</a></td>
+      </tr>
+      <tr>
+        <td><a href="albums/R/">R</a></td>
+        <td><a href="albums/S/">S</a></td>
+        <td><a href="albums/T/">T</a></td>
+        <td class="spacer"></td>
+        <td><a href="artists/R/">R</a></td>
+        <td><a href="artists/S/">S</a></td>
+        <td><a href="artists/T/">T</a></td>
+      </tr>
+      <tr>
+        <td><a href="albums/U/">U</a></td>
+        <td><a href="albums/V/">V</a></td>
+        <td><a href="albums/W/">W</a></td>
+        <td class="spacer"></td>
+        <td><a href="artists/U/">U</a></td>
+        <td><a href="artists/V/">V</a></td>
+        <td><a href="artists/W/">W</a></td>
+      </tr>
+      <tr>
+        <td><a href="albums/X/">X</a></td>
+        <td><a href="albums/Y/">Y</a></td>
+        <td><a href="albums/Z/">Z</a></td>
+        <td class="spacer"></td>
+        <td><a href="artists/X/">X</a></td>
+        <td><a href="artists/Y/">Y</a></td>
+        <td><a href="artists/Z/">Z</a></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="3">{{total_albums}} total</th>
+        <td class="spacer"></td>
+        <th colspan="3">{{total_artists}} total</th>
+      </tr>
+    </tfoot>
+  </table>
+{% endblock %}

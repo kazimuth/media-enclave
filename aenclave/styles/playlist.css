@@ -1,0 +1,11 @@
+div#plisthead {
+    font-size: 12pt;
+    margin: 15px 0px 0px;
+    text-align: right;
+}
+
+div#plisthead span {
+    font-size: 18pt;
+    font-weight: bold;
+    vertical-align: -10%;
+}

@@ -1,0 +1,71 @@
+{% extends "aenclave/songlist_base.html" %}
+{% load humanize %}
+{% load bundler_tags %}
+
+{% block title %}{{block.super}} Channels{% endblock %}
+
+{% block header %}Channels{% endblock %}
+
+{% block scripts %}{{block.super}}
+  {% javascript "aenclave-scripts" "channels.js" %}
+  {% defer %}
+    <script type="text/javascript">
+      channels.channel_id = {{ channel.id }};
+      $(document).ready(function() {
+        songlist.enable_dnd(channels.reorder_songs);
+      });
+    </script>
+  {% enddefer %}
+{% endblock %}
+
+{% block presonglist %}
+  <div id="debugz"></div>
+  <p style="text-align:center;">
+    {% if song_list %}
+      There {{song_list|length|pluralize:"is,are"}}
+      {{song_list|length|apnumber|intcomma}}
+      song{{song_list|length|pluralize}} in the queue.
+    {% else %}
+      {% if current_song %}
+        There is one song playing.
+      {% endif %}
+      No songs are in the queue.
+    {% endif %}
+    See <a href="{% url aenclave-channel-history channel.id %}">recently
+      played</a> songs.
+  </p>
+{% endblock %}
+
+{% block actions %}
+  {% if song_list %}
+    <a href="javascript:channels.dequeue();">
+      <div class="aenclave-sprites aenclave-sprites-remove-png"></div>
+      Dequeue selected songs</a>
+  {% endif %}
+  {{block.super}}
+  {% if current_song and not skipping %}
+    <a href="javascript:channels.askemail();">
+      <div class="aenclave-sprites aenclave-sprites-email-png"></div>
+      Email link to song&hellip;</a>
+  {% endif %}
+  <a href="javascript:channels.recent();">
+    <div class="aenclave-sprites aenclave-sprites-history-png"></div>
+    Recently played</a>
+{% endblock %}
+
+{% block postsonglist %}
+  {% if song_list %}
+  <center>
+    See <a href="{% url aenclave-recommendations %}">recommendations</a>
+    based on these songs. 
+  </center>
+  {% endif %}
+{% endblock %}
+
+{% block postcopyright %}{{block.super}}
+  {% if song_list %}
+    <form name="dequeueform" action="{% url aenclave-dequeue-songs %}" method="POST">
+      <input type="hidden" name="playids">
+    </form>
+  {% endif %}
+{% endblock %}

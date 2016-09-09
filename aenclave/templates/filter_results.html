@@ -1,0 +1,18 @@
+{% extends "aenclave/songlist_base.html" %}
+{% load humanize %}
+
+{% block title %}{{block.super}} Filter Results{% endblock %}
+
+{% block header %}Filter Results{% endblock %}
+
+{% block presonglist %}
+  {% if criterion_count %}
+    {% if song_list %}
+      <p>Found {{song_list|length|apnumber|intcomma}} result{{song_list|length|pluralize}} for the given criteri{{criterion_count|pluralize:"on,a"}}.</p>
+    {% else %}
+      <p>No results were found for the given criteri{{criterion_count|pluralize:"on,a"}}.</p>
+    {% endif %}
+  {% else %}
+    <p>No criteria were given.</p>
+  {% endif %}
+{% endblock %}

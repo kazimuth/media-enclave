@@ -1,0 +1,32 @@
+{% extends "aenclave/header_base.html" %}
+{% load bundler_tags %}
+
+{% block title %}{{block.super}} Login{% endblock %}
+
+{% block header %}Login{% endblock %}
+
+{% block styles %}{{block.super}}
+  {% css "aenclave-styles" "login.css" %}
+{% endblock %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <p>You are already logged in as <tt>{{user.username}}</tt>.</p>
+    <p>If you&rsquo;re someone else, you should <a href="{% url menclave-logout %}?goto={% url menclave-login %}">log in</a> as another user.</p>
+  {% else %}
+    <div class="login">
+      {% if error_message %}
+        <div class="error">{{error_message}}</div>
+      {% endif %}
+      <form method="POST" action=".">
+        {% if redirect_to %}
+          <input type="hidden" name="goto" value="{{redirect_to|escape}}">
+        {% endif %}
+        <input type="hidden" name="login" value="True">
+        <div class="form">Username: <input type="text" size="12" name="username"></div>
+        <div class="form">Password: <input type="password" size="12" name="password"></div>
+        <p><input type="submit" value="Log in"></p>
+      </form>
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,17 @@
+<div class="facet {% block facet-type %}{% endblock %}">
+  <div class="facet-name">
+    {{ attribute.name }}
+  </div>
+  <div class="facet-options">
+    {% block facet-options %}
+      <label for="{{ attribute.name }}-or">Matches any</label>
+      <input type="radio" name="{{ attribute.name }}-op" value="or" id="{{ attribute.name }}-or" checked="checked" />
+      <label for="{{ attribute.name }}-and">Matches all</label>
+      <input type="radio" name="{{ attribute.name }}-op" value="and" id="{{ attribute.name }}-and" />
+    {% endblock %}
+  </div>
+  <div class="facet-choices">
+    {% block choices %}
+    {% endblock %}
+  </div>
+</div>

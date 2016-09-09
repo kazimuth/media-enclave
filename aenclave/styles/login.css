@@ -1,0 +1,21 @@
+div.error {
+    background-color: #ffc;
+    border: 1px #c00 solid;
+    color: #c00;
+    margin: 8px 8px 18px;
+    padding: 3px;
+    text-align: center;
+}
+
+div.form {
+    margin: 10px auto;
+    text-align: right;
+    width: 180px;
+}
+
+div.login {
+    background-color: #eee;
+    border: 1px #777 solid;
+    margin: 20px auto;
+    width: 350px;
+}

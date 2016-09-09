@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+{% load bundler_tags %}
+{% load venclave_tags %}
+
+<html>
+
+  <head>
+    <title>{% block title %}VEnclave{% endblock %}</title>
+    <meta name="authors" content="Media Enclave Team"/>
+    {% block styles %}
+      {% css "venclave-styles" "base.css" %}
+    {% endblock %}
+    {% block scripts %}
+      {% javascript "venclave-scripts" "jquery-1.3.2.min.js" %}
+      {% javascript "venclave-scripts" "base.js" %}
+    {% endblock %}
+  </head>
+
+  <body>
+    <div id="container">
+      <div id="header">
+
+        {% block header %}
+          <div id="title-right">
+            <div id="login">
+              {% if user.is_authenticated %}
+                <tt>{{user.username}}</tt>
+                [<a href="{% url menclave-logout %}?goto={% url venclave-home %}"
+                  >logout</a>]
+              {% else %}
+                [<a href="{% url menclave-login %}?goto={{ request.build_absolute_uri }}"
+                  >login</a>]
+              {% endif %}
+            </div>
+
+            <div id="search">
+              <form method="GET" action="{% url venclave-browse %}">
+                <input type="text" class="search_query" name="q" size="30"
+                  value="{{search_query}}" /><br/>
+                <input type="submit" value="Go"/>
+                <input type="reset" value="Clear" onclick="this.parentNode.q.value=''; console.log(this.parentNode.q.value); this.parentNode.submit()" />
+              </form>
+            </div>
+          </div>
+
+          <div>
+            <a id="title" href="{% url venclave-home %}">venclave</a>
+          </div>
+
+          <div>
+            <div id="navigation">
+              <a href="{% url venclave-browse %}">browse</a> &middot;
+              <a href="{% url venclave-exhibit %}">exhibit</a> &middot;
+              <a href="{% url venclave-request %}">request</a>
+            </div>
+
+            <div id="breadcrumbs">
+              {% breadcrumbs request %}
+            </div>
+          </div>
+
+          <hr/>
+
+          </div>
+        {% endblock header %}
+
+      {% block content %}{% endblock content %}
+
+      {% block copyright %}
+        <div id="copyright">Powered by
+          <a href="http://code.google.com/p/media-enclave/">Media-Enclave</a>
+        </div>
+        <div id="copyright">&copy; 1999&ndash;2011 by Putz Inc.</div>
+      {% endblock copyright %}
+
+    </div>
+  </body>
+
+  <head>
+    {% deferred_content %}
+  </head>
+
+</html>

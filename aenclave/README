@@ -1,0 +1,79 @@
+Audio Enclave Install Instructions
+==================================
+
+Dependencies
+------------
+
+First, make sure the following dependencies are installed:
+
+- Python (>= 2.6)
+- Django (>= 1.0)
+- django-media-bundler (http://github.com/rnk/django-media-bundler/tree/master)
+- GStreamer (>= 0.10; this includes gstreamer-plugins-base/good/ugly/bad)
+- pygst (spelled 'python-gst' by Ubuntu/Debian)
+- Pyro (python remote objects)
+- Mutagen
+- A database that Django supports.  To start, we recommend sqlite3 because it
+  does not require a daemon running in the background.
+
+Settings
+--------
+
+Next, copy settings.py.tmpl to settings.py.  Edit settings.py and supply values
+for all variables tagged with 'CUSTOMIZE ME'.  More info on the Django specific
+settings and this process in general can be found on the Django web site.
+
+Run the manage.py script in the project root like so::
+
+  python manage.py syncdb
+  python manage.py bundle_media
+
+This will populate the database that you just configured with the model tables
+and a default channel, and it will bundle the Javascript, CSS, and image
+sprites.
+
+Running a Server
+----------------
+
+For development, you should use Django's own HTTP server, but for production
+you now need to configure Apache/mod_python for the aenclave Django project.
+To run the Django server, run the management script with the argument
+'runserver'.  You should be able to go to http://localhost:8000/admin/ and see
+the Django admin page without any errors now.
+
+Running the Player
+------------------
+
+The last step is to configure the audio enclave player daemon to start on boot.
+If you are on Ubuntu/Debian, do the following::
+
+  sudo cp MENCLAVE/aenclave/gst_player/ae-player-init.sh /etc/init.d/ae-player
+  sudo chmod +x /etc/init.d/ae-player
+  # Edit the vars labelled 'CUSTOMIZE ME'
+  sudo vi /etc/init.d/ae-player
+  sudo update-rc.d ae-player defaults
+  # Start the player now.
+  sudo /etc/init.d/ae-player start
+
+If you are using another distro, there should be similar mechanisms in place for
+your distro.
+
+Alternatively, if you're on OS X, you can install `python-daemon`_ via
+'``easy_install python-daemon``' and run
+``aenclave/gst_player/ae_player_daemon.py``.
+
+.. _python-daemon: http://pypi.python.org/pypi/python-daemon/
+
+Testing
+-------
+
+To test that everything worked, click 'Upload', upload a song, and queue it by
+clicking the link.  If playback does not start, look for tracebacks in both the
+Django server process and the gst_server process to try and diagnose the
+problem.
+
+Misc
+----
+
+To make SFTP uploading work, you should run an SFTP server on the same host as
+the gst_player process.  TODO(rnk): Document this process more thoroughly.

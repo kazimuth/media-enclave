@@ -1,0 +1,31 @@
+{% extends "aenclave/header_base.html" %}
+{% load bundler_tags %}
+
+{% block title %}{{block.super}} Filter Search{% endblock %}
+
+{% block header %}Filter Search{% endblock %}
+
+{% block styles %}{{block.super}}
+  {% css "aenclave-styles" "filter.css" %}
+{% endblock %}
+
+{% block scripts %}{{block.super}}
+  {% javascript "aenclave-scripts" "filter.js" %}
+{% endblock %}
+
+{# Note: The javascript is sensitive to some of the whitespace in the block #}
+{#       below, so don't change anything unless you know what you're doing! #}
+{% block content %}
+ <form method="get" action="search/" onsubmit="filter.gather();">
+ <ul id="filter"><li id="root">
+ <select id="bool">
+  <option value="and">Satisfies all</option>
+  <option value="nand">Doesn't satisfy all</option>
+  <option value="or">Satisfies any</option>
+  <option value="nor">Doesn't satisfy any</option>
+ </select><input type="button" value="+" onclick="filter.add_rule(this);"/><ul></ul></li></ul>
+ <div style="padding-left:70px;">
+  <input type="submit" value="Search library"/>
+ </div>
+ </form>
+{% endblock %}

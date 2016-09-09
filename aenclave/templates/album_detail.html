@@ -1,0 +1,14 @@
+{% extends "aenclave/songlist_base.html" %}
+{% load humanize %}
+
+{% block title %}{{block.super}} Album Detail{% endblock %}
+
+{% block header %}Album Detail{% endblock %}
+
+{% block presonglist %}
+{% if song_list %}
+ <p>Found {{song_list|length|apnumber|intcomma}} result{{song_list|length|pluralize}} for the album &ldquo;{{album_name|escape}}&rdquo;</p>
+{% else %}
+ <p>No results were found for the album &ldquo;{{album_name|escape}}&rdquo;</p>
+{% endif %}
+{% endblock %}

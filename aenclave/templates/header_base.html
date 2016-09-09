@@ -1,0 +1,41 @@
+{% extends "aenclave/base.html" %}
+
+{% block body %}
+  <div class="title" id="header">
+    <a href="{% url aenclave-home %}">&AElig;ncl&auml;ve</a>
+    <div class="subtitle">{% block header %}???{% endblock %}</div>
+  </div>
+  <div id="searchbar">
+    <div class="links">
+      <a href="{% url aenclave-filter-home %}">Filter</a>
+      <a href="{% url aenclave-browse-index %}">Browse</a>
+      <a href="{% url aenclave-default-channel %}">Channels</a>
+      <a href="{% url aenclave-playlists-home %}">Playlists</a>
+      <a href="{% url aenclave-http-upload-fancy %}">Upload</a>
+      <a href="{% url aenclave-roulette %}">Roulette</a>
+      <a href="{% url aenclave-help %}">Help</a>
+    </div>
+    <form method="get" action="{% url aenclave-normal-search %}">
+      <input id="search_box" type="text" name="q" size="50"
+          value="{{search_query|escape}}"/>
+      <input type="submit" value="Search"/>
+      <br/>
+      Search from: 
+      <input type="radio" name="from" value="all_songs" id="from_all_songs"
+          {% if not select_from %}checked="checked"{% endif %}/>
+      <label for="from_all_songs">all songs</label>
+      <input type="radio" name="from" value="play_count" id="from_play_count"
+          {% ifequal select_from "play_count" %}checked="checked"{% endifequal %}/>
+      <label for="from_play_count">play count &gt; 0</label>
+      <input type="radio" name="from" value="playlists" id="from_playlists"
+          {% ifequal select_from "playlists" %}checked="checked"{% endifequal %}/>
+      <label for="from_playlists">in a playlist</label>
+      <input type="radio" name="from" value="my_playlists" id="from_my_playlists"
+          {% ifequal select_from "my_playlists" %}checked="checked"{% endifequal %}/>
+      <label for="from_my_playlists">in my playlists</label>
+    </form>
+  </div>
+  <div id="headgap"></div>
+
+  {% block content %}{% endblock %}
+{% endblock %}

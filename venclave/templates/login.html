@@ -1,0 +1,50 @@
+{% extends "venclave/base.html" %}
+
+{% block styles %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% url venclave-styles "home.css" %}"/>
+{% endblock %}
+
+{% block header %}
+<img src="{% url venclave-images "venclave_welcome.png" %}" alt="Video Enclave" />
+{% endblock header %}
+
+{% block content %}
+<table class="home-content">
+  <tr>
+    <th>
+      <img src="{% url venclave-images "welcome_back.png" %}" alt="welcome back"/>
+    </th>
+    <th>
+      <img src="{% url venclave-images "new_account.png" %}" alt="create an account"/>
+    </th>
+  </tr>
+  <tr>
+    <td>
+      <form name="login" action="{% url venclave-home %}" method="POST">
+        <p>
+          <label for="login_username">username:</label>
+          <input type="text" maxlength="30" name="username" id="login_username"/>
+        </p>
+        <p>
+          <label for="login_password">password:</label> <input type="password" id="login_password" name="password"/>
+          <input type="hidden" name="f" value="l" />
+        </p>
+        <input type="image" src="{% url venclave-images "sign_in.png" %}"/>
+      </form>
+    </td>
+    <td>
+      <form name="register" action="{% url venclave-home %}" method="POST">
+        {% for field in reg_form %}
+          <p class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }}: {{ field }}
+          </p>
+        {% endfor %}
+        <input type="hidden" name="f" value="r" />
+        <input type="image" src="{% url venclave-images "register.png" %}"/>
+      </form>
+    </td>
+  </tr>
+</table>
+{% endblock content %}

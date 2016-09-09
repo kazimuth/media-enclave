@@ -1,0 +1,16 @@
+{% extends "venclave/base.html" %}
+
+{% load venclave_tags %}
+{% load bundler_tags %}
+
+{% block styles %}
+  {{ block.super }}
+  {% css "venclave-styles" "browse.css" %}
+{% endblock %}
+
+{% block content %}
+
+  {# 'nodes' should be provided to this template. #}
+  {% include "venclave/node_table.html" %}
+
+{% endblock %}

@@ -1,0 +1,7 @@
+{% load aenclave %}
+<contents>
+  <cell name="track">{{song.track_string}}</cell>
+  <cell name="title"{% if not no_queuing %} class="{% if song.last_queued|is_recent:1 %}recent{% else %}queue{% endif %}" link="{% url aenclave-queue-songs %}?ids={{song.id}}"{% endif %}>{{song.title|escape}}</cell>
+  <cell name="album" {% if song.album %}link="{% url aenclave-album song.album %}"{% endif %}>{{song.album|escape}}</cell>
+  <cell name="artist" {% if song.artist %}link="{% url aenclave-artist song.artist %}"{% endif %}>{{song.artist|escape}}</cell>
+</contents>

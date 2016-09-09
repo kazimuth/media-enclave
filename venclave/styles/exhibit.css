@@ -1,0 +1,138 @@
+/* Stylings for the Exhbiit-based content browser */
+
+.content {
+  width: 100%;
+  /* margin-top: 30px; */
+}
+
+.facets {
+  vertical-align: top;
+  padding: 0 0 0 30px;
+  width: 250px;
+}
+
+.results {
+  /* padding: 0 15px 0 0;*/
+  vertical-align: top;
+}
+
+.data {
+  vertical-align: top;
+}
+
+.exhibit-collectionView-header
+{
+  padding: 0 0 5px 50px;
+  text-align: left;
+  width: 100%;
+  font-family: monospace;
+}
+
+.exhibit-collectionView-footer {
+    font-family: monospace;
+}
+
+.exhibit-facet-header, .exhibit-flowingFacet-header {
+    font-family: monospace;
+}
+
+.exhibit-facet-value, .exhibit-flowingFacet-value {
+    font-family: monospace;
+}
+
+.exhibit-facet-value-link, .exhibit-flowingFacet-value-link {
+    color: black;
+    text-decoration: none;
+}
+
+.exhibit-facet-value-link:hover, .exhibit-flowingFacet-value-link:hover {
+    color: black;
+    text-decoration: underline;
+}
+
+.exhibit-collectionView-header-sortControls {
+    text-align: left;
+    margin: 0px;
+}
+
+.exhibit-action, .exhibit-collectionView-pagingControls-page a {
+    color: black;
+    text-decoration: none;
+}
+
+.exhibit-action:hover, .exhibit-collectionView-pagingControls-page a:hover {
+    color: black;
+    text-decoration: underline;
+}
+
+.exhibit-collectionSummaryWidget-results
+{
+  padding: 0 0 0 0;
+  font-size: 1.5em !important;
+}
+
+.exhibit-collectionSummaryWidget-count
+{
+  font-size: 1em !important;
+}
+
+.exhibit-collectionView-header-groupControl
+{
+  display: none;
+  visibility: hidden;
+}
+
+.exhibit-slider-display
+{
+  padding-left: 50px;
+}
+
+.content-item {
+  width: 100%;
+  min-height: 70px;
+  background-color: #FFF;
+  margin: 5px;
+  border: 1px solid #AAA;
+  padding: 5px;
+}
+
+.content-item:hover
+{
+  background-color: #F4F4F4;
+  border: 1px solid #888;
+}
+
+.poster
+{
+  width: 100px;
+  text-align: center;
+}
+
+.scores {
+    list-style: none;
+    padding-left: 0px;
+}
+.scores li {
+    display: inline;
+    margin-right: 10px;
+}
+.imdb, .rt, .mc, .nyt { padding-left: 5px; }
+.imdb img, .rt img, .mc img, .nyt img { margin: 0 .1em -.1em 0; }
+
+.content-title {
+    font-size: 1.4em;
+}
+
+.content-name a, .rt a, .imdb a, .mc a, .nyt a {
+    color: black;
+    text-decoration: none;
+}
+
+.content-name a:hover, .rt a:hover, .imdb a:hover, .mc a:hover, .nyt a:hover {
+    border-bottom: 1px solid black;
+}
+
+/* Get rid of numbers for items. */
+.exhibit-tileView-body {
+  list-style: none;
+}

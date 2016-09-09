@@ -1,0 +1,71 @@
+{% load aenclave %}
+<td class="triangleselect">
+  <div class="triangle aenclave-sprites aenclave-sprites-triangleselect-png"
+      style="visibility: hidden;">&nbsp;</div>
+</td>
+<td class="select c">
+  {% spaceless %}
+    {% if current %}
+      <div class="aenclave-sprites aenclave-sprites-speaker-png"
+          id="currentsong" name="{{song.id}}">&nbsp;</div>
+    {% else %}
+        <input class="song_selected" type="checkbox" name="{{song.id}}"
+            playid="{{song.playid}}"/>
+    {% endif %}
+  {% endspaceless %}
+</td>
+{% if user.is_authenticated %}
+  <td>
+    <div class="fav-heart aenclave-sprites aenclave-sprites-heart{% if not song.favorited %}-gray{% endif %}-png"
+        favorited="{% if song.favorited %}true{% else %}false{% endif %}"
+        id="fav-heart-{{song.id}}">
+      &nbsp;</div>
+  </td>
+{% endif %}
+<td name="track" class="track editable r">{{song.track_string}}</td>
+<td name="title" class="title editable{% if song.date_added|is_recent %} new{% endif %}">
+  {% if no_queuing %}
+    {{song.title|escape}}
+  {% else %}
+    <a class="{% if song.last_queued|is_recent:1 %}recent{% else %}queue{% endif %}"
+        href="{% url aenclave-queue-songs %}?ids={{song.id}}"
+        onclick="return songlist.queue_click(this)">
+      {{song.title|escape}}
+    </a>
+  {% endif %}
+</td>
+<td name="album" class="album editable">
+  {% if song.album %}
+    <a href="{% url aenclave-album song.album|urlencode %}">{{song.album|escape}}</a>
+  {% endif %}
+</td>
+<td name="artist" class="artist editable">
+  {% if song.artist %}
+    <a href="{% url aenclave-artist song.artist|urlencode %}">{{song.artist|escape}}</a>
+  {% endif %}
+</td>
+<td class="r time">{{song.time_string}}</td>
+<td class="r play-count">{{song.play_count}}</td>
+<td class="r skip-count">{{song.skip_count}}</td>
+<td class="r last-played">{{song.last_played_string}}</td>
+<td class="r date-added">{{song.date_added_string}}</td>
+{% if user.is_authenticated %}
+  <td class="edit" onclick="songlist.edit_song(this);">
+    <div class="aenclave-sprites aenclave-sprites-edit-png">&nbsp;</div>
+  </td>
+{% endif %}
+{% if dl %}
+  <td class="c">
+    <a class="dl-link" href="{% url aenclave-dl %}?ids={{song.id}}">
+      <div class="aenclave-sprites aenclave-sprites-dl-png">&nbsp;</div>
+    </a>
+  </td>
+{% endif %}
+{% if allow_dragging %}
+  <td class="drag">
+    {% if not current %}
+      <div class="aenclave-sprites aenclave-sprites-updown-png"></div>
+    {% endif %}
+  </td>
+{% endif %}
+<td>-</td>

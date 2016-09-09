@@ -1,0 +1,32 @@
+p.justified {
+  margin: 20px auto;
+  text-align: justify;
+  width: 80%;
+}
+
+p.how {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+ol.instruction-list {
+  margin: 22px auto;
+  width: 80%;
+}
+
+ol.instruction-list li {
+  margin: 15px 0px;
+}
+
+ol.instruction-list ul {
+  list-style-type: square;
+  margin: 6px 0px;
+}
+
+ol.instruction-list ul li {
+  margin: 2px 0px;
+}
+
+ol.instruction-list ul tt {
+  font-size: 12px;
+}

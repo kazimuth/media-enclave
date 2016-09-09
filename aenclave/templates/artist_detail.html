@@ -1,0 +1,14 @@
+{% extends "songlist_base.html" %}
+{% load humanize %}
+
+{% block title %}{{block.super}} Artist Detail{% endblock %}
+
+{% block header %}Artist Detail{% endblock %}
+
+{% block presonglist %}
+{% if song_list %}
+ <p>Found {{song_list|length|apnumber|intcomma}} result{{song_list|length|pluralize}} for the artist &ldquo;{{artist_name|escape}}&rdquo;</p>
+{% else %}
+ <p>No results were found for the artist &ldquo;{{artist_name|escape}}&rdquo;</p>
+{% endif %}
+{% endblock %}

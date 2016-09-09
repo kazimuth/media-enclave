@@ -1,0 +1,44 @@
+{% extends "aenclave/header_base.html" %}
+{% load bundler_tags %}
+
+{% block title %}{{block.super}} Playlists{% endblock %}
+
+{% block header %}Playlists{% endblock %}
+
+{% block styles %}{{block.super}}
+  {% css "aenclave-styles" "songlist.css" %}
+{% endblock %}
+
+{% block scripts %}{{block.super}}
+  {% javascript "aenclave-scripts" "tablesort.js" %}
+{% endblock %}
+
+{% block content %}
+  {% if playlist_list %}
+    {# TODO(rnk): Make this not a songlist table. #}
+    <table class="data" id="songlist">
+      <thead>
+        <tr>
+          <th class="sort" sorttype="text" onclick="tablesort.sorta(this);">Name</th>
+          <th class="sort" sorttype="text" onclick="tablesort.sorta(this);">Owner</th>
+          <th class="sort" sorttype="int" onclick="tablesort.sorta(this);"># Songs</th>
+          <th class="sort" sorttype="date" onclick="tablesort.sorta(this);">Last modified</th>
+          <th class="sort" sorttype="date" onclick="tablesort.sorta(this);">Date created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for playlist in playlist_list %}
+          <tr class="{% cycle a,b %}">
+            <td><a href="{{playlist.get_absolute_url}}">{{playlist.name|escape}}</a></td>
+            <td><a href="user/{{playlist.owner_name|escape}}/"><tt>{{playlist.owner_name}}</tt></a></td>
+            <td class="r">{{playlist.songs__count}}</td>
+            <td class="r">{{playlist.last_modified_string}}</td>
+            <td class="r">{{playlist.date_created_string}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No playlists exist.</p>
+  {% endif %}
+{% endblock %}

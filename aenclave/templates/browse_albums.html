@@ -1,0 +1,43 @@
+{% extends "aenclave/header_base.html" %}
+{% load aenclave %}
+{% load bundler_tags %}
+{% load humanize %}
+
+{% block title %}{{block.super}} Albums ({{letter}}){% endblock %}
+
+{% block header %}Albums ({{letter}}){% endblock %}
+
+{% block styles %}{{block.super}}
+  {% css "aenclave-styles" "browse.css" %}
+{% endblock %}
+
+{% block content %}
+  {% if albums %}
+    <p>
+      The database contains {{albums|length|apnumber|intcomma}}
+      album{{albums|length|pluralize}} starting with {% ifequal letter "#" %}a
+      non-letter{% else %}the letter &ldquo;{{letter}}&rdquo;{% endifequal %}:
+    </p>
+    <table class="matches">
+      <tbody>
+        {% for group in albums|groups_of:3 %}
+          <tr>
+            {% for album in group %}
+              <td>
+                {% if album %}
+                  <a href="{% url aenclave-album album|urlencode %}">
+                    {{album|escape}}</a>
+                {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>
+      The database contains no albums starting with {% ifequal letter "#" %}a
+      non-letter{% else %}the letter &ldquo;{{letter}}&rdquo;{% endifequal %}.
+    </p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "aenclave/header_base.html" %}
+{% load bundler_tags %}
+
+{% block styles %}
+  {{ block.super }}
+  {# We do this to get the recent and queue classes. #}
+  {% css "aenclave-styles" "songlist.css" %}
+{% endblock %}
+
+{% block header %}Song Detail{% endblock %}
+
+{% block content %}
+  <p>
+    <a href="{% url aenclave-queue-songs %}?ids={{object.id}}">
+      {{object.title}}
+    </a>
+  </p>
+  <p>by artist: {{object.artist}}</p>
+  <p>track {{object.track_string}} on album {{object.album}}</p>
+  <br/>
+  <p>Song was added on {{object.date_added_string}}</p>
+  <p>Song was last queued on {{object.last_queued_string}}</p>
+  <p>Song was last played on {{object.last_played_string}}</p>
+  <p>Song has been played {{object.play_count}} time{{object.play_count|pluralize}}</p>
+  <p>Song has been skipped {{object.skip_count}} time{{object.play_count|pluralize}}</p>
+{% endblock %}

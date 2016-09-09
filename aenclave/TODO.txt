@@ -1,0 +1,21 @@
+Actions:
+* Email link to song
++ Playlist renaming and ceding
+/ Song deletion requests (in progress)
+- Play history
+
+Features:
++ SFTP Upload
+* DL
++ Certs
+- Smart playlists
+- Paged search results?
+
+Extra:
++ Make auto-update work in Firefox
+- Make control buttons be As (w/ background images) instead of IMGs
+- Make everything reload-safe
+- logging (at least as observed in control.py) isn't set up yet.
+
+Note: emailing (deletion requests and song emails) is currently broken because EXIM isn't configured properly.
+ I'm working on it. rryan 9/9/07

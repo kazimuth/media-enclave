@@ -1,0 +1,42 @@
+{% extends "aenclave/header_base.html" %}
+
+{% block title %}{{block.super}} {{error_title|default:"Help"}}{% endblock %}
+
+{% block header %}{{error_title|default:"Help"}}{% endblock %}
+
+{% block content %}
+  <h2>General Instructions</h2>
+  <p style="text-align: left">
+    Audio Enclave is pretty self explanatory.  Click
+    <a href="/audio/upload/">upload</a> to upload songs, search for them, and
+    play them.
+  </p>
+  <h2>Playlists</h2>
+  <p style="text-align: left">
+    Playlists can be constructed with the buttons on the bottom panel.
+    Favorites playlists are a special kind of playlist that you can easily add
+    to and remove from by clicking the heart icon.  If you don't see the heart
+    icons, make sure that you are logged in.
+  </p>
+  <h2>Keyboard Shortcuts</h2>
+  <ul>
+    <li><b>j/k</b> - move selection up or down</li>
+    <li><b>enter</b> - queue the selected song</li>
+    <li><b>a</b> - toggle select all on the page</li>
+    <li><b>h</b> - go home</li>
+    <li><b>f</b> - go to my favorites</li>
+    <li><b>p</b> - go to playlists</li>
+    <li><b>c</b> - go to channels</li>
+    <li><b>b</b> - go to browse</li>
+    <li><b>u</b> - go to upload</li>
+    <li><b>r</b> - go to roulette</li>
+  </ul>
+  <h2>Contact Maintainers</h2>
+  <p style="text-align: left">
+    Audio Enclave is part of the
+    <a href="http://code.google.com/p/media-enclave/">Media-Enclave</a>
+    project, which is hosted on Google Code.  You can file bugs
+    <a href="http://code.google.com/p/media-enclave/issues/">here</a>,
+    and send email to men_clave-d_ev at mit dot edu (without underscores).
+  </p>
+{% endblock %}

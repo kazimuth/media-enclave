@@ -1,0 +1,9 @@
+table.detail { 
+    width: 600px;
+}
+
+table.detail th { 
+    padding-right: 10px;
+    text-align: right;
+    vertical-align: top;
+}

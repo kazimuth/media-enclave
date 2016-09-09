@@ -1,0 +1,72 @@
+{% extends "aenclave/header_base.html" %}
+{% load bundler_tags %}
+
+{% block title %}{{block.super}} Upload Songs{% endblock %}
+
+{% block header %}Upload Songs{% endblock %}
+
+{% block styles %}{{block.super}}
+  {% css "aenclave-styles" "upload.css" %}
+{% endblock %}
+
+{% block scripts %}{{block.super}}
+  {% javascript "aenclave-scripts" "upload.js" %}
+{% endblock %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <!-- Tell them about the new fancy flash page -->
+    <div class="upload">
+      <div>Multiple File HTTP Upload</div>
+      <p><strong>We have a brand new multiple-file upload page! It's much
+          better than the old ways, so you should go try it out
+          <a href="{% url aenclave-http-upload-fancy %}">here</a>.</strong></p>
+    </div>
+
+    <div align="center" class="upload">
+      <div>YouTube Audio Upload</div>
+      <form method="post" action="/audio/upload/youtube/receive/">
+        Rip the audio from a YouTube video (this takes a while):
+        <input type="text" name="youtube-url"/>
+        <input type="submit" value="Submit"/>
+      </form>
+    </div>
+
+    <!-- HTTP upload -->
+    <div class="upload">
+      <div>HTTP Upload</div>
+      <form action="{% url aenclave-http-upload %}" method="post" enctype="multipart/form-data" onsubmit="upload.disable_form(this);">
+        <table>
+          <tr>
+            <th>Choose an MP3 file to upload:</th>
+            <td><input type="file" name="audio"></td>
+          </tr>
+          <tr>
+            <th>Then click here to upload it:</th>
+            <td><input type="submit" value="Upload song via HTTP"></td>
+          </tr>
+        </table>
+      </form>
+      <p>Please be patient after pressing the upload button while the MP3 is
+        being copied to Audio Enclave.</p>
+    </div>
+    <!-- SFTP upload -->
+    <div class="upload">
+      <div>SFTP Upload</div>
+      <form action="{% url aenclave-sftp-upload %}" method="post" onsubmit="upload.disable_form(this);">
+        <table>
+          <tr><th>Upload MP3 files via SFTP:</th>
+            <td><tt>sftp upload@nice-rack.mit.edu</tt></td></tr>
+          <tr>
+            <th>Then click here to add them:</th>
+            <td><input type="submit" value="Add songs uploaded via SFTP"></td>
+          </tr>
+        </table>
+      </form>
+      <p>Confused?&nbsp; Check out these <a href="{% url aenclave-sftp-info %}">instructions for SFTP uploading</a>.</p>
+    </div>
+    <p class="warning"><span><b>PLEASE DO NOT UPLOAD DUPLICATE SONGS.</b>&nbsp; First make sure that your songs aren&rsquo;t already in the database.</span></p>
+  {% else %}
+    <p>You must <a href="{% url menclave-login %}?goto={% url aenclave-upload-home %}">log in</a> to upload songs.</p>
+  {% endif %}
+{% endblock %}

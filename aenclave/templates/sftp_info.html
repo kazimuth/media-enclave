@@ -1,0 +1,54 @@
+{% extends "aenclave/header_base.html" %}
+{% load bundler_tags %}
+{% load aenclave %}
+
+{% block title %}{{block.super}} SFTP Upload{% endblock %}
+
+{% block header %}SFTP Upload{% endblock %}
+
+{% block styles %}{{block.super}}
+  {% css "aenclave-styles" "sftp_info.css" %}
+{% endblock %}
+
+{% block content %}
+  <p class"justified">You can use SFTP to upload many songs to Audio Enclave at once.&nbsp; This
+    is much more efficient if you want to upload a large collection, for
+    instance.&nbsp; If you just have a single song to upload, it will probably
+    be easier to use the <a href="{% url aenclave-upload-home %}">HTTP upload
+    page</a> instead.</p>
+  <p class="how">How to upload songs using SFTP</p>
+  <ol class="instruction-list">
+    <li>Install a working SFTP client.&nbsp; Try
+      <a href="http://filezilla-project.org/">FileZilla</a>.</li>
+    <li>Connect to Audio-Enclave with these settings:
+      <ul>
+        <li>Host: <tt>{{ GST_PLAYER_HOST }}</tt></li>
+        <li>Username: <tt>upload</tt></li>
+        <li>Port: <tt>22</tt></li>
+        <li>Protocol: <tt>SFTP</tt></li>
+      </ul>
+      Ask an administrator for the upload password.
+    </li>
+    <li>Upload the songs; it&rsquo;s okay to have files in
+      subdirectories.&nbsp; You may only upload MP3 or M4A files.&nbsp; Please
+      do not upload songs that are already in the database.</li>
+    <li>
+      After you have uploaded everything, click the button below
+      {% if not user.is_authenticated %}
+        (after first <a href="{% url menclave-login %}?goto={% url aenclave-sftp-info %}">logging in</a>)
+      {% endif %}
+      and follow the instructions.
+    </li>
+    <li>Rock out.</li>
+  </ol>
+  <form method="post" action="{% url aenclave-sftp-upload %}">
+    <p class"justified">
+      {% if user.is_authenticated %}
+        <input type="submit" value="Add uploaded songs"/>
+      {% else %}
+        <input type="submit" value="Add uploaded songs" disabled="disabled"/>
+        You must <a href="{% url menclave-login %}?goto={% url aenclave-sftp-info %}">log in</a> before adding the songs.
+      {% endif %}
+    </p>
+  </form>
+{% endblock %}

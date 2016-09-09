@@ -1,0 +1,220 @@
+/******************************* GLOBAL STYLES *******************************/
+
+body {
+    background-color: #fff;
+    color: #000;
+    font-family: "Times New Roman", "Times", serif;
+    font-size: 14px;
+    margin: 11px 27px 0px;
+}
+
+p {
+  text-align: center;
+}
+
+p.warning {
+    margin: 40px auto 20px;
+    text-align: center;
+}
+
+p.warning span {
+    background-color: #fcc;
+    border: 1px #bbb solid;
+    padding: 3px 10px;
+}
+
+tt {
+    font-family: "Andale Mono", monospace;
+    font-size: 0.9em;
+}
+
+div.title {
+    font-family: "Georgia", "Times New Roman", "Times", serif;
+    font-size: 28px;
+    text-align: center;
+}
+
+div.title a {
+    color: #000;
+    text-decoration: none;
+}
+div.title a:active { color: #900; }
+
+div#header {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    width: 200px;
+}
+
+div.subtitle {
+    font-size: 20px;
+    margin: 10px 0px;
+    text-align: center;
+}
+
+div#searchbar {
+    position: absolute;
+    left: 240px;
+    top: 32px;
+}
+
+div.links {
+    border: 1px #bdc solid;
+    margin: 0px auto 6px;
+    padding: 2px 0px 1px;
+    text-align: center;
+    width: 420px;
+}
+
+div.links a {
+    color: #9ba;
+    padding: 0px 6px;
+    text-decoration: none;
+}
+
+div.links a:hover {
+    color: #9ad;
+    text-decoration: underline;
+}
+
+div.links a:active { color: #d99; }
+
+div#headgap { height: 100px; }
+
+div#login {
+    font-size: 12px;
+    position: absolute;
+    right: 20px;
+    top: 11px;
+    text-align: right;
+}
+
+div#copyright {
+    font-size: 12px;
+    margin: 10px;
+    text-align: center;
+}
+
+/******************************** CONTROL BOX ********************************/
+
+#controls {
+    background-color: #ddd;
+    border-top: 1px #aaa solid;
+    border-left: 1px #aaa solid;
+    height: 160px;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    text-align: left;
+    width: 230px;
+    z-index: 3;
+}
+
+#controls H4 {
+    margin: 1px;
+}
+
+#controls #control-box {
+    position: relative;
+    height: 42px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#controls OL {
+    margin-top: 0px;
+    margin-left: -17px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+}
+
+#controls .control-action {
+    background-color: #eee;
+    border: 1px #cce outset;
+    cursor: pointer;
+    font-size: 1px;
+    height: 26px;
+    position: absolute;
+    top: 14px;
+    text-decoration: none;
+    width: 50px;
+}
+
+#controls .control-action .aenclave-sprites {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 7px;  /* Hack to get vertical centering. */
+}
+
+#controls .control-action:hover {
+    background-color: #ddf;
+}
+
+#controls .control-action:active {
+    background-color: #eaf;
+    border: 1px #cce inset;
+}
+
+#controls .control-action#play {
+    left: 0px;
+}
+#controls .control-action#pause {
+    left: 0px;
+}
+#controls .control-action#skip {
+    left: 55px;
+}
+#controls .control-action#shuffle {
+    left: 110px;
+}
+
+#controls #controls-minimize {
+    position: relative;
+    top: 0px;
+    float: right;
+    width: 16px;
+    height: 16px;
+    margin: 3px;
+    padding: 0px;
+    background-color: white;
+    border: thin solid black;
+    cursor: pointer;
+}
+
+#controls-restore {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: 4;
+    background-color: white;
+    width: 16px;
+    height: 16px;
+    text-decoration: none;
+    border: thin solid black;
+    cursor: pointer;
+}
+
+#controls #progress-bar {
+    background-color: #dfd;
+    border: 1px #555 inset;
+    padding: 0px;
+    position: absolute;
+    left: 0px;
+    top: 2px;
+    /* This width must be consistent with the value in controls.js. */
+    width: 160px;
+    height: 8px;
+}
+
+#controls #timebar {
+    background-color: #8b8;
+    border: none;
+    height: 8px;
+    margin: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+/*****************************************************************************/

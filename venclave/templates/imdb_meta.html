@@ -1,0 +1,21 @@
+{% with content.metadata.imdb as imdb %}
+{% if imdb %}
+
+<div class="message imdb">
+Rating: {{ imdb.rating }}<br/>
+
+Genres: {% for genre in imdb.genre.all %}
+<a href="{% url venclave-genre genre.id %}">{{genre.name}}</a>
+{% ifnotequal forloop.revcounter 1 %}|{% endifnotequal %}
+{% endfor %}<br/>
+
+Directors: {% for director in imdb.directors.all %}
+<a href="{% url venclave-director director.id %}">{{director.name}}</a>
+{% ifnotequal forloop.revcounter 1 %}|{% endifnotequal %}
+{% endfor %}<br/>
+</div>
+
+
+{% endif %}
+{% endwith %}
+

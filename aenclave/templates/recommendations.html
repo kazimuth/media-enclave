@@ -1,0 +1,50 @@
+{% extends "aenclave/songlist_base.html" %}
+{% load humanize %}
+{% load bundler_tags %}
+
+{% block title %}{{block.super}} Recommendations{% endblock %}
+
+{% block header %}Recommendations{% endblock %}
+
+{% block scripts %} {{block.super}}
+  {% defer %}
+    <script type="text/javascript">
+      songlist.original_songs = "{{ original_songs }}";
+    </script>
+  {% enddefer %}
+{% endblock %}
+
+{% block presonglist %}
+{% if song_list %}
+<p>Here are some recommendations based on the songs you've queued:</p>
+{% else %}
+<p>No recommendations were found based on the songs you've queued.</p>
+{% endif %}
+<p id="feedback_msg">&nbsp;</p>
+{% endblock %}
+
+
+      {% block actions %}
+        {% if song_list or show_songlist %}
+          {% if not no_queuing %}
+            <a href="javascript:songlist.queue();">
+              <div class="aenclave-sprites aenclave-sprites-speaker-png"></div>
+              Queue selected songs</a>
+          {% endif %}
+          {% if dl %}
+            <a href="javascript:songlist.dl();">
+              <div class="aenclave-sprites aenclave-sprites-dl-png"></div>
+              DL selected songs</a>
+          {% endif %}
+
+          <a href="javascript:songlist.report_bad_recs();">
+	    <div class="aenclave-sprites aenclave-sprites-delete-png"></div>
+	  Report bad recommendations</a>
+
+        {% endif %}
+      {% endblock %}
+
+
+
+
+

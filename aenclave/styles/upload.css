@@ -1,0 +1,57 @@
+div.upload {
+    margin: 15px auto 45px;
+}
+
+div.upload div {
+    background-color: #555;
+    border: 1px #999 solid;
+    color: #DFE;
+    font-size: 14px;
+    margin: 0px auto 10px;
+    padding: 3px;
+    text-align: center;
+    width: 60%;
+}
+
+div.upload table {
+    border: none;
+    margin: 5px auto 5px;
+    width: 70%;
+}
+
+div.upload table th {
+    font-weight: normal;
+    padding: 1.5ex 1.0em;
+    text-align: right;
+    width: 50%;
+}
+
+div.upload table td {
+    padding: 1.5ex 0;
+    text-align: left;
+    width: 50%;
+}
+
+.progressCancel {
+    font: blue;
+}
+
+.progressName {
+    font-weight: bold;
+    padding-right:10px;
+    padding-left:10px;
+}
+
+.progressBarStatus {
+    font-weight:bold;
+    padding-right:10px;
+    padding-left:10px;
+}
+
+.progressContainer.red {
+    background-color: red;
+}
+
+.progressContainer.green {
+    background-color: green;
+}

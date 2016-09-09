@@ -1,0 +1,10 @@
+{% extends "aenclave/songlist_base.html" %}
+{% load humanize %}
+
+{% block title %}{{block.super}} Delete Request{% endblock %}
+
+{% block header %}Deletion Requested{% endblock %}
+
+{% block presonglist %}
+  <p>The following songs' deletions have been requested:</p>
+{% endblock %}

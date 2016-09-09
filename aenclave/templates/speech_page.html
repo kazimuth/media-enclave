@@ -1,0 +1,208 @@
+{% extends "aenclave/base.html" %}
+{% load humanize %}
+
+{% block body %}
+	
+	<P>OH HI!!</p>
+		
+<textarea id='jsgfarea' cols='80' rows='15'>
+#JSGF V1.0;
+grammar EnglishSandboxExample;
+public <top> = <prefixes> <commands>;
+<commands> = (
+	  (queue {[command=queue]}| play {[command=play]}) [song] <songs> | <controls>
+	);
+<controls> = (
+			(dee q|skip) {[controls=skip]}
+			| pozz {[controls=pause]}
+			| shuffle {[controls=shuffle]}
+			| (drop a beat | play [me] a song | play a better song) {[lucky=1]}
+			| (restart|play|wake up|resume) {[controls=play]}
+		)
+			[this [(shit | song)]];
+			
+<prefixes> = [(yo|hey|[uh yes] hello)] [mister] [(dee jay|nice rack|en are)] [please];
+<songs> = the worst song ever {[id=36311]} |
+	femto mats favorite song {[id=36640]} |
+	{{grammar}};
+</textarea>
+
+		<script src="http://wami.csail.mit.edu/portal/wami.js?devKey={{WAMI_KEY}}"></script>
+
+		<script>
+		// all this is copied and pasted from wami, so it's a little messy
+		var myWamiApp; 
+		
+		// window.onmousedown = function() {
+		// 	myWamiApp.startRecording();
+		// }
+		// window.onmouseup = function() {
+		// 	myWamiApp.stopRecording();
+		// }
+
+		var _englishjsgf = document.getElementById('jsgfarea').value;
+		function onLoad() {
+			//div in which to put the audio button, see below
+		  	var audioDiv = document.getElementById('AudioContainer'); 
+
+		  	var grammar = {"language" : "en-us", "grammar" : _englishjsgf };
+
+		  	//show the grammar in the text area
+		    document.getElementById("jsgfarea").value = _englishjsgf;  
+
+			//Audio options.
+		  	//pollForAudio: must be true for speech synthesis to work. 
+		  	//If your application doesn't use speech synthesis, set this to false.
+		  	var audioOptions = {"pollForAudio" : true};
+
+		  	//Configuration options.
+		  	//sendIncrementalResults: if true, you'll receive "incremental" recognition results as the user speaks
+		  	//sendAggregates: if true, you'll receive a "semantic" interpretation.  Your grammar
+		  	//must follow a specific format.
+		  	var configOptions = {"sendIncrementalResults" : false, "sendAggregates" : true};
+
+		  	//Handlers are functions which are called for various events:
+		  	var handlers = {"onReady" : onWamiReady, //WAMI is loaded and ready
+				  		    "onRecognitionResult" : onWamiRecognitionResult,  //Speech recognition result available
+				  		    "onError" : onWamiError,  //An error occurred
+				  		    "onTimeout" : onWamiTimeout}; //WAMI timed out due to inactivity
+
+		    //Create your WAMI application with the settings and grammar we just created
+		  	myWamiApp = new WamiApp(audioDiv, handlers, "json", audioOptions, configOptions, grammar);   	
+
+			//disable the playback button
+			document.getElementById("playbackbutton").disabled=true;
+		}
+
+		//gets the grammar from the text box and update the grammar used
+		//by the WAMI application
+		function setGrammar() {
+			//hide any old errors
+			var errorDiv = document.getElementById("errors");
+			clearChildren(errorDiv);	
+
+			//get the jsgf and set the grammar. 
+			//onWamiError will be called if there are any compilation errors
+			var jsgf = document.getElementById("jsgfarea").value;
+			var language = document.getElementById("languagebox").value;
+			myWamiApp.setGrammar({"language" : language, "grammar" : jsgf});
+		}
+
+		function onWamiReady() {
+			//Called when your WAMI application is ready.  You might wait until now
+			//to tell the user it's time to start interacting
+		}
+
+		//called when a speech recognition result is received
+		//since we set sendIncrementalResults to true, 
+		//this will get called many times as the user speaks
+		function onWamiRecognitionResult(result) {
+			
+			var data = result.hyps[0].aggregate.kvs;
+			
+			if (data.hasOwnProperty('controls')) {
+			
+				controls[data.controls]();
+				
+			} else if (data.hasOwnProperty('lucky')) {
+				
+				jQuery.ajax({
+					url: "/audio/search/",
+					type: 'get',
+					data: {
+					  'lucky' : '1'
+					}
+			    });
+				
+			} else if (data.hasOwnProperty('command')) {
+				
+			    jQuery.ajax({
+					url: "/audio/"+(data.command == 'play' ? 'queue_to_front' : 'queue')+"/",
+					type: 'get',
+					data: {
+					  'ids' : data.id,
+					  'getupdate' : '1'
+					}
+				});
+			
+			}
+					
+			var hyp = result.hyps[0].text;  //what we think the user said
+			var hypsDiv = document.getElementById("hyps");
+			clearChildren(hypsDiv);
+			if(result.hyps && result.hyps.length > 0) {
+				hypsDiv.appendChild(document.createTextNode("Top Hyp: " + result.hyps[0].text));
+			}	 
+
+			//print some debugging information
+			hypsDiv.appendChild(document.createElement("br"));
+			hypsDiv.appendChild(document.createTextNode("(incremental=" + result.incremental + ",utt_id=" + result.utt_id + ",incremental_index=" + result.incremental_index + ")"));
+
+			//enable playback of last utterance only when finished speaking
+			if(result.incremental) {
+				document.getElementById("playbackbutton").disabled=true;
+			} else {
+				document.getElementById("playbackbutton").disabled=false;
+			}	
+		}
+
+		//called when an error occurs
+		//if grammar compilation error occurs, we inform the user
+		function onWamiError(type, message) {
+			if(type == "grammar_compilation") {
+				var errorDiv = document.getElementById("errors");
+				var font = document.createElement("font");
+				font.color = "red";
+				font.appendChild(document.createTextNode(message));
+				errorDiv.appendChild(font);
+			} else {			
+				alert("WAMI error: type  = " + type + ", message = " + message);			
+			}
+		}
+
+		//called when your WAMI session times out due to
+		//in activity.
+		function onWamiTimeout() {
+			alert("WAMI timed out.  Hit reload to start over");
+		}
+
+		//utility function
+		function clearChildren(e) {
+		  while(e.childNodes && e.childNodes.length > 0) {
+		    e.removeChild(e.childNodes[0]);
+		  }
+		}
+		
+		// make sure WAMI doesn't time out by turning the mic
+		// on and off every 4 minutes
+		setInterval(function() {
+			
+			myWamiApp.startRecording();
+			setTimeout(function() { myWamiApp.stopRecording(); }, 50);
+			
+		}, 1000 * 60 * 4);
+
+
+		</script>
+		</head>
+
+		<body onload="onLoad()">
+		<div id="AudioContainer"></div> <!--  Audio button will be put here -->
+		<div id="hyps">&nbsp;</div> <!--  Speech recognition hypotheses go here -->
+		<br />
+		<input type="button" id="compilebutton" value="Compile Grammar" onclick="setGrammar();">
+		<input type="button" id="playbackbutton" value="Playback what I heard" onclick="myWamiApp.replayLastRecording();"/>
+		<div id="errors"></div> <!--  grammar errors will be shown here -->
+		<br />
+		<p>
+		Type a grammar into the box, and hit "Compile Grammar".  Then hold the button and say something.  You should
+		see recognition results appear as you speak.
+		</p>
+		<p>
+		To start with, you can try saying <b>Testing three two one</b> or <b>"testing one two three"</b>
+		</p>
+		<p>
+		You can even try a Chinese grammar by changing the language.
+		</p>
+		
+	{% endblock %}

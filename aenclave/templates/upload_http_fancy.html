@@ -1,0 +1,96 @@
+{% extends "aenclave/songlist_base.html" %}
+{% load bundler_tags %}
+{% load humanize %}
+
+{% block title %}{{block.super}} HTTP Upload{% endblock %}
+
+{% block header %}HTTP Upload{% endblock %}
+
+{% block styles %}{{block.super}}
+  {% css "aenclave-styles" "upload.css" %}
+{% endblock %}
+
+{% block scripts %}{{block.super}}
+  {% javascript "aenclave-scripts" "swfupload.js" %}
+  {% javascript "aenclave-scripts" "swfupload.queue.js" %}
+  {% javascript "aenclave-scripts" "swfupload.cookies.js" %}
+  {% javascript "aenclave-scripts" "fileprogress.js" %}
+  {% javascript "aenclave-scripts" "fancyupload.js" %}
+  {% defer %}
+    <script type="text/javascript">
+      var swfu;
+      
+      jQuery(document).ready(function() {
+        var settings = {
+          flash_url : "{% url aenclave-scripts "swfupload.swf" %}",
+          upload_url: "{% url aenclave-http-upload-fancy-receiver %}",
+          post_params: {},
+          file_size_limit : "100 MB",
+          file_types : "{{file_types|join:";"}}",
+          file_types_description : "AudioFiles",
+          file_upload_limit : 100,
+          file_queue_limit : 0,
+          custom_settings : {
+            progressTarget : "songlist",
+          },
+          debug: false,
+
+          // Button settings
+          button_image_url: "{% url aenclave-images "button160x22.png" %}",
+          button_width: "160",
+          button_height: "22",
+          button_placeholder_id: "buttonPlaceHolder",
+          button_text: '<span class="theFont">Click Here to Upload</span>',
+          button_text_style: ".theFont { font-size: 16; }",
+          button_text_left_padding: 12,
+          button_text_top_padding: 0,
+
+          // The event handler functions are defined in handlers.js
+          file_queued_handler : fileQueued,
+          file_queue_error_handler : fileQueueError,
+          file_dialog_complete_handler : fileDialogComplete,
+          upload_start_handler : uploadStart,
+          upload_progress_handler : uploadProgress,
+          upload_error_handler : uploadError,
+          upload_success_handler : uploadSuccess,
+          upload_complete_handler : uploadComplete,
+          queue_complete_handler : queueComplete    // Queue plugin event
+        };
+
+        swfu = new SWFUpload(settings);
+      });
+    </script>
+  {% enddefer %}
+{% endblock %}
+
+{% block presonglist %}
+  <div align="center">
+    <strong style="font-size: 18px;">You can upload multiple files at a time
+      now! Just Shift+Click or Control+Click</strong><br/><br/>
+
+    <span id="buttonPlaceHolder"></span><br/>
+    <div id="divStatus">0 Files Uploaded</div>
+  </div>
+
+  <p>
+    <div align="center">
+      <form method="post" action="/audio/upload/youtube/receive/">
+        Rip the audio from a YouTube video (this takes a while):
+        <input type="text" name="youtube-url"/>
+        <input type="submit" value="Submit"/>
+      </form>
+    </div>
+  </p>
+
+  <p>(If this page doesn't work for you, you can use the old,
+    <a href="{% url aenclave-upload-home %}">single-file upload</a>
+    or <a href="{% url aenclave-sftp-info %}">SFTP</a>.)</p>
+
+  <p class=warning><span><b>PLEASE DO NOT UPLOAD DUPLICATE SONGS.</b>&nbsp;
+    First make sure that your songs aren&rsquo;t already in the
+    database.</span></p>
+
+  <p>Songs you upload will show up below. <em>Please make sure that their tag
+      information is up to date.</em></p>
+
+{% endblock %}

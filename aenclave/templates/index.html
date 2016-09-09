@@ -1,0 +1,43 @@
+{% extends "aenclave/base.html" %}
+{% load humanize %}
+
+{% block body %}
+  <br/>
+  <div class="title">&AElig;ncl&auml;ve</div>
+  <div class="subtitle">&Pi;&Tau;&Zeta; Audio Network</div>
+  <br/>
+  <div class="links">
+    <a href="{% url aenclave-filter-home %}">Filter</a>
+    <a href="{% url aenclave-browse-index %}">Browse</a>
+    <a href="{% url aenclave-default-channel %}">Channels</a>
+    <a href="{% url aenclave-playlists-home %}">Playlists</a>
+    <a href="{% url aenclave-http-upload-fancy %}">Upload</a>
+    <a href="{% url aenclave-roulette %}">Roulette</a>
+    <a href="{% url aenclave-help %}">Help</a>
+  </div>
+  <form method="get" action="{% url aenclave-normal-search %}">
+    <p><input id="search_box" type="text" name="q" size="60"/></p>
+    <p>
+      Search from:
+      <input type="radio" name="from" value="all_songs" id="from_all_songs"
+          checked="checked"/>
+      <label for="from_all_songs">all songs</label>
+      <input type="radio" name="from" value="play_count" id="from_play_count"/>
+      <label for="from_play_count">play count &gt; 0</label>
+      <input type="radio" name="from" value="playlists" id="from_playlists"/>
+      <label for="from_playlists">in a playlist</label>
+      <input type="radio" name="from" value="my_playlists"
+          id="from_my_playlists"/>
+      <label for="from_my_playlists">in my playlists</label>
+    </p>
+    <p>
+      <input type="submit" value="Search library"/>
+      <input type="submit" name="lucky" value="I'm feeling lucky"/>
+    </p>
+  </form>
+  <p>Now searching through {{total_song_count|intcomma}} song{{total_song_count|pluralize}}.</p>
+  <p>
+    <a href="{% url aenclave-filter-search %}?k=and&k_0=date_added&k_0_r=last&k_0_f0=2&k_0_f1=week&sort=-date-added">Recently uploaded songs</a> |
+    <a href="{% url aenclave-filter-search %}?k=and&k_0=last_played&k_0_r=last&k_0_f0=24&k_0_f1=hour&sort=-last-played">Recently played songs</a>
+  </p>
+{% endblock %}

@@ -1,0 +1,3 @@
+{% comment %}
+This template is used for sending error responses for XML requests.
+{% endcomment %}<error>{{error_message|escape}}</error>
