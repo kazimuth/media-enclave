@@ -5,7 +5,6 @@ venclave.filter = {
     init: function() {
         $('div.facet').each(venclave.bound_func(function(i, div) {
             var type = div.className.split("facet ")[1];
-            type = jQuery.trim(type);
             var filter = new this[type](div);
             this.filters.push(filter);
         }, this));

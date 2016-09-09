@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django.template import RequestContext
 
 from menclave.log.util import enable_logging
-from menclave.login import permission_required_redirect
+from menclave.aenclave.login import permission_required_redirect
 from menclave.aenclave.html import html_error, render_html_template
 from menclave.aenclave import processing
 from menclave.aenclave import youtuberip
@@ -52,9 +52,9 @@ def upload_sftp(request):
                 full_path = root + '/' + filename
 
                 content = File(open(full_path, 'r'))
-
+    
                 song, audio = processing.process_song(full_path, content)
-
+                
                 song_list.append(song)
 
                 if audio.info.sketchy:
@@ -84,7 +84,8 @@ def upload_http_fancy(request):
                                 context_instance=RequestContext(request))
 
 def load_session_from_request(handler):
-    """Read the session key from the GET/POST vars instead of the cookie.
+    """Read the session key from the GET/POST vars instead of the
+    cookie. If the session key is not present, do nothing.
 
     Centipedes, in my request headers?
     Yes! We sometimes receive the session key in the POST, because the
@@ -94,9 +95,7 @@ def load_session_from_request(handler):
     def func(request, *args, **kwargs):
         session_key = request.REQUEST.get(settings.SESSION_COOKIE_NAME, None)
         if not session_key:
-            # TODO(rnk): Do something more sane like ask the user if their
-            #            session is expired or some other weirdness.
-            raise Http404()
+            return handler(request, *args, **kwargs)
         # This is how SessionMiddleware does it.
         session_engine = __import__(settings.SESSION_ENGINE, {}, {}, [''])
         try:
@@ -116,20 +115,19 @@ def upload_http_fancy_receiver(request):
     for k,f in request.FILES.items():
         audio = f
 
-    # SWFUpload does not properly fill out the song's mimetype, so
-    # just use the extension.
     if audio is None:
         logging.error("Did not find any file uploaded.")
         return html_error(request, 'No file was uploaded.', 'HTTP Upload')
 
     logging.info("Received upload of %s" % audio.name)
-
+    
     if not processing.valid_song(audio.name):
         logging.error("Rejecting upload due to unsupported filetype")
         return html_error(request, 'This filetype is unsupported.',
                           'HTTP Upload')
 
-    # Save the song into the database -- we'll fix the tags in a moment.
+    # Save the song into the database -- we'll fix the tags in a
+    # moment.
     song, audio = processing.process_song(audio.name, audio)
 
     return render_html_template('aenclave/songlist_song_row.html', request,

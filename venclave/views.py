@@ -1,38 +1,22 @@
 # venclave/views.py
 
+import json
 import cgi
-import datetime
-import itertools
-import logging
-import re
 
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django import forms
-from django.conf import settings
-from django.contrib import auth
 from django.contrib.auth import forms as auth_forms
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.utils.translation import ugettext_lazy as _  # For the auth form.
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
-from django.template import Context, RequestContext
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template.loader import select_template
-from django.utils.translation import ugettext_lazy as _  # For the auth form.
+from django.template import Context, RequestContext
 
-from menclave.venclave.html import render_to_response
-from menclave.venclave.models import (ContentNode, KIND_MOVIE, KIND_SERIES,
-                                      KIND_SEASON, Role, IMDBMetadata,
-                                      ContentRequest)
+from menclave.venclave.models import ContentNode
 from menclave.venclave.templatetags import venclave_tags
-
-
-def json_response(json_obj, indent=None):
-    return HttpResponse(json.dumps(json_obj, indent=indent))
 
 
 class VenclaveUserCreationForm(auth_forms.UserCreationForm):
@@ -59,41 +43,30 @@ def Qu(field, op, value):
 
 
 def home(request):
-    browse_redirect = HttpResponseRedirect(reverse('venclave-browse'))
-    # If already authenticated, go right in.
     if request.user.is_authenticated():
-        return browse_redirect
-
-    ## If SSL auth works, go right in.
-    #user = auth.authenticate(request=request)
-    #if user:
-        #auth.login(request, user)
-        #logging.info("User %s logged in via SSL", user.username)
-        #return browse_redirect
-
+        return HttpResponseRedirect(reverse('venclave-browse'))
     reg_form = VenclaveUserCreationForm()
     if request.method == 'POST':
         # login
-        if request.POST.get('f') == 'l':
+        if request.POST['f'] == 'l':
             username = request.POST['username']
             password = request.POST['password']
-            user = auth.authenticate(username=username, password=password)
+            user = authenticate(username=username, password=password)
             if user is not None:
-                auth.login(request, user)
-                logging.info("User %s logged in via password", user.username)
-                return browse_redirect
+                login(request,user)
+                return HttpResponseRedirect(reverse('venclave-browse'))
         # register
-        elif settings.VENCLAVE_ALLOW_REGISTRATION and request.POST['f'] == 'r':
+        elif request.POST['f'] == 'r':
             reg_form = VenclaveUserCreationForm(request.POST)
             if reg_form.is_valid():
                 reg_form.save()
                 username = reg_form.cleaned_data['username']
                 password = reg_form.cleaned_data['password1']
-                user = auth.authenticate(username=username, password=password)
-                auth.login(request, user)
-                return browse_redirect
-    return render_to_response("venclave/index.html", request,
-                              {'reg_form': reg_form, 'settings': settings})
+                user = authenticate(username=username, password=password)
+                login(request, user)
+                return HttpResponseRedirect(reverse('venclave-browse'))
+    return render_to_response("venclave/index.html",
+                              {'reg_form': reg_form})
 
 
 def words_to_query(query_string):
@@ -110,267 +83,34 @@ def words_to_query(query_string):
     return full_query
 
 
-@login_required
-def exhibit(request):
-    result = {'settings': settings}
-    return render_to_response('venclave/exhibit.html', request, result,
-                              context_instance=RequestContext(request))
+def browse_and_update_vals(nodes, query_string):
+    """Compute values common to browse and update_list.
 
-
-def exhibit_history(request):
-    return HttpResponse('<html><body></body></html>')
-
-
-def _grouped_dict(through_model, key_model, child_model, order_by=None):
-    """From a 'through' model, group one model keyed on another.
-
-    This allows us to efficiently do a single query to map from
-    IMDBMetadata primary keys to lists of actor, genre, and director names.
-
-    Each dict looks something like:
-    {imdb_pk1 : [actor1_name, actor2_name...],
-     imdb_pk2 : [actor1_name, actor3_name...],
-     ...}
+    Returns a dict containing objects useful for browse and update_list.
     """
-    order = [key_model]
-    if order_by:
-        order.append(order_by)
-    q = through_model.objects.order_by(*order)
-
-    # Profiling revealed that most time is spent in Django's base model
-    # constructor, so we avoid creating those model objects when all we want is
-    # the name of the child model by using .values() to get a dict instead.
-    imdb_id_attr = key_model + '_id'
-    name_attr = child_model + '__name'
-    q = q.values(name_attr, imdb_id_attr)
-
-    return dict((imdb_id, [r[name_attr] for r in results])
-                for (imdb_id, results) in itertools.groupby(
-                    q, lambda t: t[imdb_id_attr]))
-
-
-# TODO(rnk): Move the json mimetype stuff back up out of aenclave so we can
-# reuse it for this request.
-#from menclave.profiling import profile
-#@profile('exhibit.prof')
-@login_required
-def exhibit_content(request):
-    content_nodes = ContentNode.with_metadata(
-        ).filter(kind__in=[KIND_MOVIE, KIND_SERIES])
-    kinds = {KIND_MOVIE: 'Movie',
-             KIND_SERIES: 'TV Show',}
-    items = []
-    titleyearPattern = re.compile("^(.*) \((\d{4})\)$")
-
-    # for i in range(15):
-    #     items.append({'type': 'Season',
-    #                   'label': ,
-    #                   'Label': 'Season %d' % (i+1),
-    #                   'href': '/tvseasons'})
-
-    # select_related doesn't work for ManyToMany relationships, so we load all
-    # genre, actor, and director names into memory.
-    imdb_to_actors = _grouped_dict(Role, 'imdb', 'actor', order_by='bill_pos')
-    imdb_to_directors = _grouped_dict(IMDBMetadata.directors.through,
-                                      'imdbmetadata', 'director')
-    imdb_to_genres = _grouped_dict(IMDBMetadata.genres.through,
-                                   'imdbmetadata', 'genre')
-
-    for node in content_nodes:
-        name = node.simple_name()
-        item = {'type': kinds.get(node.kind, 'Unknown'),
-                'label': node.simple_name(),
-                'DateAdded': str(node.created),
-                'Title': node.simple_name(),
-                'Year': '',
-                }
-        missing = []
-
-        match = titleyearPattern.search(name)
-        if match:
-            item['Title'] = match.group(1)
-            item['Year'] = match.group(2)
-
-
-        is_tv_series = node.kind == KIND_SERIES
-        is_movie = node.kind == KIND_MOVIE
-
-        if is_tv_series:
-            seasons = []
-
-            for child in node.children.all():
-                seasons.append({'type': 'Season',
-                                'label': str(child.id),
-                                'title': child.title,
-                                'link': '<a href="%s">%s</a>' % ('/foolio',
-                                                                 child.title),
-                                'href': '/tvseasons/%d' % child.id})
-            items.extend(seasons)
-
-            item['Seasons'] = [str(child.id) for child in node.children.all()
-                               if child.kind == KIND_SEASON]
-            # item['Seasons'] = [{'type': 'Season',
-            #                     'label': child.title,
-            #                     'href': '/tvseasons'}
-            #                    for child in node.children.all()
-            #                    if child.kind == KIND_SEASON]
-
-        item['DL'] = node.downloads
-
-        metadata = node.metadata
-        imdb = metadata.imdb if metadata else None
-        rt = metadata.rotten_tomatoes if metadata else None
-        mc = metadata.metacritic if metadata else None
-
-        if metadata and metadata.nyt_review:
-            item['NYTReviewURL'] = metadata.nyt_review
-        else:
-            missing.append('NYTReviewURL')
-
-        if imdb:
-            imdb = node.metadata.imdb
-            item['IMDbURL'] = 'http://www.imdb.com/title/tt%s' % imdb.imdb_id
-
-            if imdb.rating is not None:
-                item['IMDbRating'] = imdb.rating
-            else:
-                missing.append('IMDbRating')
-
-            if imdb.length is not None:
-                item['IMDbRuntime'] = imdb.length
-            else:
-                missing.append('IMDbRuntime')
-
-            if imdb.plot_outline is not None:
-                item['IMDbPlotOutline'] = imdb.plot_outline
-            else:
-                missing.append('IMDbPlotOutline')
-
-            item['IMDbGenres'] = imdb_to_genres.get(imdb.pk, [])
-            item['IMDbDirectors'] = imdb_to_directors.get(imdb.pk, [])
-
-            # Limit to top 4
-
-            item['IMDbActors'] = imdb_to_actors.get(imdb.pk, [])[:4]
-
-            # Don't provide it if we don't have any. It's easier to check after
-            # the query.
-            if len(item['IMDbActors']) == 0:
-                del item['IMDbActors']
-
-            if imdb.thumb_image:
-                item['ThumbURL'] = imdb.thumb_image.url
-
-            # if imdb.thumb_uri is not None:
-            #     item['ThumbURL'] = imdb.thumb_uri
-            #     item['ThumbWidth'] = imdb.thumb_width
-            #     item['ThumbHeight'] = imdb.thumb_height
-        else:
-            missing.append('IMDbURL')
-
-        if rt:
-            item['RTURL'] = rt.rt_uri
-
-            # Prefer IMDb (local) thumbnails.
-            if rt.thumb_uri and 'ThumbURL' not in item:
-                item['ThumbURL'] = rt.thumb_uri
-                # item['ThumbWidth'] = rt.thumb_width
-                # item['ThumbHeight'] = rt.thumb_height
-
-            if rt.top_critics_percent:
-                item['RTRating'] = rt.top_critics_percent
-
-
-                if rt.top_critics_fresh is None:
-                    item['RTST'] = 'n'
-                elif rt.top_critics_fresh is True:
-                    item['RTST'] = 'f'
-                else:
-                    item['RTST'] = 'r'
-            elif rt.all_critics_percent:
-                item['RTRating'] = rt.all_critics_percent
-                if rt.all_critics_fresh is None:
-                    item['RTST'] = 'n'
-                elif rt.all_critics_fresh is True:
-                    item['RTST'] = 'f'
-                else:
-                    item['RTST'] = 'r'
-            else:
-                item['RTST'] = 'n'
-                missing.append('RTRating')
-        else:
-            missing.append('RTURL')
-
-        if mc:
-            item['MCURL'] = 'http://www.metacritic.com%s' % mc.mc_uri
-            if mc.score:
-                item['MCRating'] = mc.score
-            else:
-                missing.append('MCRating')
-            if mc.status:
-                if mc.status == 'tbd':
-                    item['MCST'] = 'n'
-                elif mc.status in ['terrible', 'unfavorable']:
-                    item['MCST'] = 'u'
-                elif mc.status in ['mixed']:
-                    item['MCST'] = 'm'
-                elif mc.status in ['favorable', 'outstanding']:
-                    item['MCST'] = 'f'
-            else:
-                item['MCST'] = 'n'
-        else:
-            missing.append('MCURL')
-
-        item['Missing'] = missing
-        items.append(item)
-
-    properties = {
-        'Title': { 'valueType': 'text' },
-        'Year': { 'valueType': 'number' },
-        'Seasons': { 'valueType': 'item' },
-        'ThumbURL': { 'valueType': 'url' },
-        'ThumbWidth': { 'valueType': 'number' },
-        'ThumbHeight': { 'valueType': 'number' },
-        'IMDbRating': { 'valueType': 'number', 'label': 'IMDb User Rating' },
-        'IMDbURL': { 'valueType': 'url', 'label': 'IMDb URL' },
-        'IMDbGenres': { 'valueType': 'text', 'label': 'Genres' },
-        'IMDbDirectors': { 'valueType': 'text', 'label': 'Directors' },
-        'IMDbActors': { 'valueType': 'text', 'label': 'Actors' },
-        'IMDbRuntime': { 'valueType': 'number', 'label': 'Runtime' },
-        'IMDbReleaseDate': { 'valueType': 'date', 'label': 'Release Date' },
-        'IMDbAKA': { 'valueType': 'text', 'label': 'Alternate Titles' },
-        'IMDbProduction': { 'valueType': 'text', 'label': 'Production Companies' },
-        'IMDbPlotOutline': { 'valueType': 'text', 'label': 'Plot Outline' },
-        'RTRating': { 'valueType': 'number', 'label': 'RottenTomatoes Rating' },
-        'RTURL': { 'valueType': 'url', 'label': 'RottenTomatoes URL' },
-        'RTActors': { 'valueType': 'text', 'label': 'Actors' },
-        'RTDirectors': { 'valueType': 'text', 'label': 'Directors' },
-        'RTWriters': { 'valueType': 'text', 'label': 'Writers' },
-        'RTST': { 'valueType': 'text', 'label': 'RottenTomatoes Status'},
-        'RTBoxOffice': { 'valueType': 'number', 'label': 'Box Office' },
-        'MCURL': { 'valueType': 'url', 'label':' MetaCritic URL' },
-        'MCRating': { 'valueType': 'number', 'label': 'Metacritic Rating' },
-        'MCST': { 'valueType': 'text', 'label': 'Metacritic Status' },
-        'MCNA': { 'valueType': 'boolean', 'label': 'MC No Rating' },
-        'NYTReviewURL': { 'valueType': 'url', 'label': 'NYT Review URL' },
-        'DateAdded': { 'valueType': 'date', 'label': 'Date Added' },
-        'DL': { 'valueType': 'number', 'label': 'Downloads' },
-        'Random': { 'valueType': 'number', 'label': 'Random' },
-        'Missing': { 'valueType': 'text', 'label': 'Missing Fields' },
-        }
-
-    types = {
-        'Movie': { 'pluralLabel': 'Movies' },
-        'TV Show': { 'pluralLabel': 'TV Shows' },
-        'Season': { 'pluralLabel': 'Seasons' },
+    nodes = nodes.select_related('metadata__imdb')
+    video_list = create_video_list(nodes)
+    video_count = ContentNode.objects.all().count()
+    results_count = nodes.count()
+    return {
+        'videolist': video_list,
+        'banner_msg': banner_msg(video_count, results_count, query_string),
     }
 
-    result = {'types': types,
-              'properties': properties,
-              'items': items }
 
-    indent = None if not settings.DEBUG else 2
-    return json_response(result, indent=indent)
+@login_required
+def browse(request):
+    # Process search query
+    form = request.GET
+    query_string = form.get('q', '')
+    full_query = words_to_query(query_string)
+    nodes = ContentNode.objects.filter(full_query)
+    facet_attributes = ContentNode.attributes
+    result = browse_and_update_vals(nodes, query_string)
+    result.update({'attributes': facet_attributes,
+                   'search_query': query_string})
+    return render_to_response('venclave/browse.html', result,
+                              context_instance=RequestContext(request))
 
 
 @login_required
@@ -416,54 +156,105 @@ def update_list(request):
         else:
             raise ValueError("op must be 'slider', 'or', or 'and'")
     result = browse_and_update_vals(nodes, query_string)
-    return json_response(result)
+    return HttpResponse(json.dumps(result))
+
+
+def create_video_list(nodes):
+    """Return the HTML table of the video list.
+
+    We do not use Django templates here because they are *extremely* slow when
+    rendered over and over again in a loop.  This optimization may become
+    irrelevant when we enable paging, but for now it's a big help.
+    """
+    html_parts = [LIST_HEADER]
+    for node in nodes:
+        imdb = node.metadata and node.metadata.imdb
+        html_parts.append(LIST_ITEM_TEMPLATE % {
+            'id': node.id,
+            'icon': reverse("venclave-images",
+                            args=["%s_icon.png" % node.kind]),
+            'kind': node.kind,
+            'title': node.title,
+            'length': imdb and venclave_tags.mins_to_hours(imdb.length) or '-',
+            'year': imdb and imdb.release_year or '-',
+            'rating': imdb and venclave_tags.make_stars(imdb.rating) or '-',
+        })
+    html_parts.append(LIST_FOOTER)
+    return ''.join(html_parts)
+
+
+LIST_HEADER = """\
+<table id="video-list" cellspacing="0" cellpadding="0">
+  <thead>
+    <tr>
+      <th class="item-icon"></th>
+      <th class="item-arrow"></th>
+      <th class="item-title">title</th>
+      <th class="item-length">length</th>
+      <th class="item-release">year</th>
+      <th class="item-rating">rating</th>
+    </tr>
+  </thead>
+  <tbody id="list-body" class="list-body">
+"""
+
+
+LIST_FOOTER = """\
+  </tbody>
+</table>
+"""
+
+
+LIST_ITEM_TEMPLATE = """\
+<tr id1="%(id)s">
+  <td class="item-icon">
+    <img src="%(icon)s" alt="%(kind)s"/>
+  </td>
+  <td class="item-arrow">
+  </td>
+  <td class="item-title">
+    <a href="#" class="leaf"
+      onclick="return venclave.videolist.title_onclick(this)">%(title)s</a>
+  </td>
+  <td class="item-length">
+    %(length)s
+  </td>
+  <td class="item-release">
+    %(year)s
+  </td>
+  <td class="item-rating">
+    %(rating)s
+  </td>
+</tr>
+"""
+
+
+def banner_msg(video_count, results_count, search_string):
+    msg = ''
+    if video_count != results_count:
+        msg += '%s results in ' % results_count
+    msg += '%s videos' % video_count
+    if search_string:
+        msg += ' for "%s"' % cgi.escape(search_string)
+    return msg
 
 
 @login_required
-def upvote(request):
-    upvote_id = int(request.GET['upvote'])
-    content_request = get_object_or_404(ContentRequest, id=upvote_id)
-    if request.user == content_request.user:
-        return json_response(
-                {'error': "You can't upvote your own request."})
-    if request.user in content_request.voters.all():
-        return json_response(
-                {'error': "You can't upvote the same request twice."})
-
-    content_request.voters.add(request.user)
-    content_request.votes += 1
-    content_request.save()
-    return json_response({'success': 1, 'id': upvote_id})
-
-
-@user_passes_test(lambda u: u.is_staff)
-def satisfied(request):
-    id = int(request.GET['id'])
-    satisfied = bool(request.GET['satisfied'])
-    content_request = get_object_or_404(ContentRequest, id=id)
-    content_request.satisfied
-    return json_response({'success': 1, 'id': upvote_id})
+def get_pane(request):
+    id = request.GET['id']
+    node = ContentNode.objects.get(pk=id)
+    t = select_template(['venclave/panes/%s_pane.html' % node.kind,
+                         'venclave/panes/default.html'])
+    return HttpResponse(t.render(Context({'node': node})))
 
 
 @login_required
-def request(request):
-    # POST requests are probably the best way to handle these kinds of
-    # requests.  We always want to end up at the same page after processing the
-    # request, and using POST will usually prevent the user from refreshing.
-    if request.POST.get('make_request', '') == 'true':
-        content_request = ContentRequest(name=request.POST['name'],
-                                         user=request.user, votes=1)
-        content_request.save()
-    if request.POST.get('mark_satisfied', '') == 'true':
-        id = int(request.POST['id'])
-        content_request = get_object_or_404(ContentRequest, id=id)
-        content_request.satisfied = bool(request.POST['satisfied'] == 'true')
-        content_request.satisfied_on = datetime.datetime.now()
-        content_request.save()
+def upload(request):
+    return render_to_response('venclave/upload.html',
+                              context_instance=RequestContext(request))
 
-    q = ContentRequest.objects.select_related('user')
-    active = q.filter(satisfied=False).order_by('-votes', '-added')
-    satisfied = q.filter(satisfied=True).order_by('-satisfied_on')
-    return render_to_response("venclave/request.html", request,
-                              {'active_requests': active,
-                               'satisfied_requests': satisfied})
+
+def detail(request, id):
+    node = get_object_or_404(ContentNode, pk=id)
+    return render_to_response('venclave/detail.html',
+                              {'node': node})

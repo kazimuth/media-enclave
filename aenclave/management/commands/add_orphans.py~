@@ -1,0 +1,108 @@
+import os
+from os.path import join
+
+from django.core.management.base import NoArgsCommand
+from optparse import make_option
+
+
+from menclave.aenclave.models import Song, SONGS_ROOT
+from menclave.aenclave import processing
+from menclave import settings
+
+class Command(NoArgsCommand):
+    """
+    """
+
+    option_list = NoArgsCommand.option_list + ( make_option('--verbose', action='store_true', dest='verbose', help='List orphans verbosely.'),)
+    help = 'Checks through the Song database for orphaned fles.'
+
+    def readd_song(self, path, **options):
+        sont = Song(track=0, time=0)
+        song.audio = path
+
+        audio = None
+
+        if not valid_song(name):
+            raise BadContent(name)
+    
+        ext = name.lower()[len(name)-3:]
+
+        if ext == "mp3":
+            # Now, open up the MP3 file and save the tag data into the database.
+            audio = MP3(song.audio.path, ID3=EasyID3)
+            try: info['title'] = audio['title'][0]
+            except (KeyError, IndexError): info['title'] = 'Unnamed Song'
+            try: info['album'] = audio['album'][0]
+            except (KeyError, IndexError): info['album'] = ''
+            try: info['artist'] = audio['artist'][0]
+            except (KeyError, IndexError): info['artist'] = ''
+            try: info['track'] = int(audio['tracknumber'][0].split('/')[0])
+            except (KeyError, IndexError, ValueError): info['track'] = 0
+            info['time'] = int(ceiling(audio.info.length))
+
+        # omfg: iTunes tags... hate. hate. hate.
+        # http://atomicparsley.sourceforge.net/mpeg-4files.html
+        elif ext == "m4a":
+            # Now, open up the MP3 file and save the tag data into the database.
+            audio = MP4(song.audio.path)
+            try: 
+                info['title'] = audio['\xa9nam'][0]
+            except (KeyError, IndexError): 
+                try: 
+                    info['title'] = audio['\xa9NAM'][0]
+                except (KeyError, IndexError):
+                    info['title'] = 'Unnamed Song'
+            try: 
+                info['album'] = audio['\xa9alb'][0]
+            except (KeyError, IndexError):
+                try: 
+                    info['album'] = audio['\xa9ALB'][0]
+                except (KeyError, IndexError): 
+                    info['album'] = ''
+            try: 
+                info['artist'] = audio['\xa9art'][0]
+            except (KeyError, IndexError): 
+                try: 
+                    info['artist'] = audio['\xa9ART'][0]
+                except (KeyError, IndexError):
+                    info['artist'] = ''
+            try: info['track'] = int(audio['trkn'][0][0])
+            except (KeyError, IndexError, ValueError, TypeError): 
+                info['track'] = 0
+            info['time'] = int(ceiling(audio.info.length))
+        else:
+            raise BadContent(ext)
+
+        song.title = info['title']
+        song.album = info['album']
+        song.artist = info['artist']
+        song.track = info['track']
+        song.time = info['time']
+        song.save()
+
+        if not hasattr(audio.info, 'sketchy'):
+            # Mutagen only checks mp3s for sketchiness
+            audio.info.sketchy = False
+        
+    def handle_noargs(self, **options):
+        verbose = options.get('verbose', False)
+        
+        orphans = 0
+        total = 0
+
+        SONGS_PATH = settings.MEDIA_ROOT + SONGS_ROOT
+        for root,dirs,files in os.walk(SONGS_PATH):
+            for f in files:
+                filename = join(root,f).replace(settings.MEDIA_ROOT, '')
+
+                total += 1
+                try:
+                    song = Song.objects.get(audio=filename)
+                    if verbose:
+                        print "Song #%d => %s" % (song.pk, filename)
+                except Song.DoesNotExist, e:
+                    orphans += 1
+                    print "Orphan: %s" % (filename)
+                    readd_song(filename)
+                
+        print 'Done -- %d files orphaned of %d' % (orphans, total)

@@ -19,9 +19,9 @@
     <div class="upload">
       <div>Multiple File HTTP Upload</div>
       <p><strong>We have a brand new multiple-file upload page! It's much
-          better than the old ways, so you should go try it out
+          better than the old ways, so you should go try it out 
           <a href="{% url aenclave-http-upload-fancy %}">here</a>.</strong></p>
-    </div>
+    </div>    
 
     <div align="center" class="upload">
       <div>YouTube Audio Upload</div>
@@ -67,6 +67,6 @@
     </div>
     <p class="warning"><span><b>PLEASE DO NOT UPLOAD DUPLICATE SONGS.</b>&nbsp; First make sure that your songs aren&rsquo;t already in the database.</span></p>
   {% else %}
-    <p>You must <a href="{% url menclave-login %}?goto={% url aenclave-upload-home %}">log in</a> to upload songs.</p>
+    <p>You must <a href="{% url aenclave-login %}?goto={% url aenclave-upload-home %}">log in</a> to upload songs.</p>
   {% endif %}
 {% endblock %}

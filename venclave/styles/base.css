@@ -5,40 +5,30 @@ body {
     margin: 0;
 }
 
-hr {
-    background-color: #f7941d;
-    height: 2px;
-    border: none;
-}
-
 #container {
     width: 1000px;
     margin-right: auto;
     margin-left: auto;
 }
 
-#header {
+#header { 
     position: relative;
     padding-top: 20px;
     width: 1000px;
 }
 
-#title-right {
-    float: right;
-    text-align: right;
-}
-
-#header #navigation {
-    float: right;
-}
-
-#header #breadcrumbs{
+#header #navigation{ 
     margin: 14px 0;
 }
 
-#login {
-    font-size: 12px;
-    text-align: right;
+#navigation img {
+    border: 0;
+}
+
+#search { 
+    position: absolute;
+    top: 50px;
+    right: 40px;
 }
 
 #user {
@@ -61,64 +51,3 @@ hr {
     text-align: center;
 }
 
-#header {
-    font-size: 16pt;
-}
-
-#header a {
-    color: #464646;
-    font-family: Monaco, "Droid Sans Mono", "Andale Mono", verdana, sans-serif;
-    text-decoration: none;
-}
-
-#navigation a {
-    /*background: #a5e055;*/
-    background: #ddddff;
-}
-
-a.crumb-active {
-    background: #a5e055;
-}
-
-a#title {
-    color: #f7941d;
-    font-family: Monaco, "Andale Mono", verdana, sans-serif;
-    font-size: 48pt;
-}
-
-h2.table_title {
-    width: 100%;
-    margin-top: 20px;
-    margin-bottom: 8px;
-    padding-bottom: 3px;
-    border-bottom: 3px solid #f7941d;
-    display: block;
-    font-size: 12pt;
-    font-weight: 550;
-}
-
-/* Content requests. */
-
-.content-requests {
-    width: 100%;
-}
-
-#error-box {
-    display: none;
-    position: fixed;
-    bottom: -100px;
-    left: 300px;
-    height: 30px;
-    background: #ffb751;
-    padding: 5px;
-    border: 5px #ffb751;
-    border-radius: 5px;
-}
-
-td.vote-cell {
-    /* Numbers should be right justified. */
-    text-align: right;
-    padding-right: 10px;
-    font-weight: bold;
-    font-family: Monaco, "Andale Mono", verdana, sans-serif;
-}

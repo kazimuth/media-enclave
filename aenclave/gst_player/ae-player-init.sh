@@ -3,11 +3,14 @@
 # ae-player     Start the audio-enclave player server.
 #
 
+VIRTUALENV_DIR="/opt/webapps/nicerack"
+source $VIRTUALENV_DIR"/bin/activate"
+
 ### CUSTOMIZE ME
-MENCLAVE_DIR="/opt/django-apps/menclave"
+MENCLAVE_DIR="/opt/webapps/nicerack/menclave"
 
 ## CUSTOMIZE ME
-AE_USER="www-data"
+AE_USER="ryanqputz"
 
 DAEMON="$MENCLAVE_DIR/aenclave/gst_player/gst_server.py"
 NAME="ae-player"

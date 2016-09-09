@@ -33,7 +33,7 @@ if (typeof(SWFUpload) === "function") {
 
   SWFUpload.prototype.startUpload = function (fileID) {
     this.customSettings.queue_cancelled_flag = false;
-    this.callFlash("StartUpload", false, [fileID]);
+    this.callFlash("StartUpload", [fileID]);
   };
 
   SWFUpload.prototype.cancelQueue = function () {

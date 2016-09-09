@@ -1,0 +1,53 @@
+/* Generated classes for django-media-bundler sprites.  Don't edit! */
+
+.venclave-sprites {
+     background-image: url('/audio/images/venclave-sprites.png');
+}
+
+.venclave-sprites-browse_title-png {
+     width: 336px;
+     background-position: 0px 0px;
+     height: 51px;
+}
+
+.venclave-sprites-browse_green-png {
+     width: 99px;
+     background-position: 0px -51px;
+     height: 31px;
+}
+
+.venclave-sprites-upload_white-png {
+     width: 99px;
+     background-position: -99px -51px;
+     height: 31px;
+}
+
+.venclave-sprites-slash-png {
+     width: 31px;
+     background-position: -198px -51px;
+     height: 31px;
+}
+
+.venclave-sprites-star_yellow_full-png {
+     width: 19px;
+     background-position: -229px -51px;
+     height: 18px;
+}
+
+.venclave-sprites-star_yellow_half-png {
+     width: 19px;
+     background-position: -248px -51px;
+     height: 18px;
+}
+
+.venclave-sprites-mo_icon-png {
+     width: 22px;
+     background-position: -267px -51px;
+     height: 11px;
+}
+
+.venclave-sprites-tv_icon-png {
+     width: 21px;
+     background-position: -289px -51px;
+     height: 10px;
+}

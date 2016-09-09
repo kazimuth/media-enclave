@@ -10,63 +10,23 @@ urlpatterns = patterns(
         name='venclave-home'),
 
     url(r'^browse/$',
-        'menclave.venclave.browse.browse',
-        name='venclave-browse'),
+        'menclave.venclave.views.browse',
+        name='venclave-browse' ),
 
-    url(r'^browse/movies/$',
-        'menclave.venclave.browse.movies',
-        name='venclave-browse-movies'),
+    url(r'^upload/$',
+        'menclave.venclave.views.upload',
+        name='venclave-upload'),
 
-    url(r'^browse/movies/(?P<title>[^/]+)/$',
-        'menclave.venclave.browse.movie_detail',
-        name='venclave-movie-detail'),
-
-    url(r'^browse/tv/$',
-        'menclave.venclave.browse.tv',
-        name='venclave-browse-tv'),
-
-    url(r'^browse/tv/(?P<series>[^/]+)/$',
-        'menclave.venclave.browse.series',
-        name='venclave-browse-series'),
-
-    url(r'^browse/tv/(?P<series>[^/]+)/(?P<season>[^/]+)/$',
-        'menclave.venclave.browse.season',
-        name='venclave-browse-season'),
-
-    url(r'^browse/tv/(?P<series>[^/]+)/(?P<season>[^/]+)/(?P<episode>[^/]+)/$',
-        'menclave.venclave.browse.episode_detail',
-        name='venclave-episode-detail'),
-
-    url(r'^browse/other/$',
-        'menclave.venclave.browse.other',
-        name='venclave-browse-other'),
-
-    url(r'^exhibit/$',
-        'menclave.venclave.views.exhibit',
-        name='venclave-exhibit'),
-
-    url(r'^exhibit/content/$',
-        'menclave.venclave.views.exhibit_content',
-        name='venclave-exhibit-content'),
-
-    url(r'^exhibit/__history__.html',
-        'menclave.venclave.views.exhibit_history',
-        name='venclave-exhibit-history'),
-
-    url(r'^detail/(?P<id>\d+)/$',
-        'menclave.venclave.browse.detail',
+    url(r'^detail/(\d+)$',
+        'menclave.venclave.views.detail',
         name='venclave-detail'),
-
-    url(r'request/$',
-        'menclave.venclave.views.request',
-        name='venclave-request'),
-
-    url(r'request/upvote/$',
-        'menclave.venclave.views.upvote',
-        name='venclave-upvote'),
 
     url(r'^update_list/$',
         'menclave.venclave.views.update_list'),
+
+    url(r'^load_pane/',
+        'menclave.venclave.views.get_pane',
+        name="venclave-pane"),
 
     url(r'logout/',
         'django.contrib.auth.views.logout_then_login',

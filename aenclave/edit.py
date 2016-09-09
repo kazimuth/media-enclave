@@ -8,7 +8,7 @@ except ImportError:
     def EasyMP3(*args, **kwargs):
         return MP3(*args, ID3=EasyID3, **kwargs)
 
-from menclave.login import permission_required_xml, permission_required_json
+from menclave.aenclave.login import permission_required_xml, permission_required_json
 from menclave.aenclave.xml import xml_error, render_xml_to_response
 from menclave.aenclave.json_response import json_error, render_json_template
 from menclave.aenclave.utils import get_unicode, get_integer

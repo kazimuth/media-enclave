@@ -13,6 +13,8 @@ from django.contrib.auth.models import Group, User
 #================================= UTILITIES =================================#
 
 def datetime_string(dt):
+    if not dt:
+        return "Never"
     date, today = dt.date(), datetime.date.today()
     if date == today: return dt.strftime('Today %H:%M:%S')
     elif date == today - datetime.timedelta(1):
@@ -336,11 +338,7 @@ class Channel(models.Model):
     def touch(self):
         self.save()  # `self.last_touched` will auto-update.
 
-    def controller(self):
-        # TODO(rnk): This import goes here to avoid circularity.  We should
-        # avoid this.
-        from menclave.aenclave.control import Controller
-        return Controller(self)
+    def controller(self): return Controller(self)
 
 #---------------------------- For 6.867 --------------------------------
 
@@ -363,5 +361,8 @@ class GoodRecs(models.Model):
 class BadRecs(models.Model):
 
     bad_recs = models.IntegerField(editable=False)
+
+# This import goes at the end to avoid circularity.
+from control import Controller
 
 #=============================================================================#

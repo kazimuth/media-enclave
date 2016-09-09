@@ -1,9 +1,11 @@
 {% extends "aenclave/base.html" %}
 {% load humanize %}
 
+{% block title %}{{block.super}} 8 my baby!{% endblock %}
+
 {% block body %}
   <br/>
-  <div class="title">&AElig;ncl&auml;ve</div>
+  <div class="title">Ni&ccedil;e-R&auml;ck</div>
   <div class="subtitle">&Pi;&Tau;&Zeta; Audio Network</div>
   <br/>
   <div class="links">
@@ -36,6 +38,10 @@
     </p>
   </form>
   <p>Now searching through {{total_song_count|intcomma}} song{{total_song_count|pluralize}}.</p>
+<p class=warning id=impolite><span><b>It's
+      impolite to dequeue other people's songs.</b>&nbsp; Practice good
+    <tt>nice-rack</tt> etiquette and only dequeue or skip songs that you have
+    queued.</span></p>
   <p>
     <a href="{% url aenclave-filter-search %}?k=and&k_0=date_added&k_0_r=last&k_0_f0=2&k_0_f1=week&sort=-date-added">Recently uploaded songs</a> |
     <a href="{% url aenclave-filter-search %}?k=and&k_0=last_played&k_0_r=last&k_0_f0=24&k_0_f1=hour&sort=-last-played">Recently played songs</a>

@@ -3,6 +3,8 @@
 from django.conf import settings
 from django.conf.urls.defaults import url, patterns
 
+from menclave.aenclave.models import Song
+
 urlpatterns = patterns(
     '',
 
@@ -28,6 +30,20 @@ urlpatterns = patterns(
         'django.views.static.serve',
         {'document_root': settings._MENCLAVE_ROOT + 'aenclave/images/'},
         name='aenclave-images'),
+
+    # Login/logout
+
+    url(r'^login/$',
+        'menclave.aenclave.login.login',
+        name='aenclave-login'),
+
+    url(r'^logout/$',
+        'menclave.aenclave.login.logout',
+        name='aenclave-logout'),
+
+    url(r'^user/$',  # DEBUG remove this eventually
+        'menclave.aenclave.login.user_debug',
+        name="aenclave-user-debug"),
 
     # Queuing
 
@@ -71,9 +87,8 @@ urlpatterns = patterns(
      'menclave.aenclave.browse.browse_artists'),
 
     url(r'^songs/(?P<object_id>\d+)/$',
-        #'django.views.generic.list_detail.object_detail',
-        #{'queryset': Song.objects, 'template_name': 'song_detail.html'},
-        'menclave.aenclave.browse.view_song',
+        'django.views.generic.list_detail.object_detail',
+        {'queryset': Song.objects, 'template_name': 'song_detail.html'},
         name='aenclave-song'),
 
     url(r'^albums/(?P<album_name>.+)/$',

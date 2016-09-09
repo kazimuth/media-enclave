@@ -1,4 +1,4 @@
-# menclave/aenclave/channel.py
+# menclave/aenclave/html.py
 
 """Channel related views and functions."""
 
@@ -6,9 +6,9 @@ from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
 
-from menclave.login import (permission_required_json,
-                            permission_required,
-                            permission_required_xml)
+from menclave.aenclave.login import (permission_required_json,
+                                     permission_required,
+                                     permission_required_xml)
 from menclave.aenclave.utils import get_int_list, get_song_list, get_integer
 from menclave.aenclave.xml import (simple_xml_response, xml_error,
                                    render_xml_to_response)
@@ -127,28 +127,28 @@ def _json_control_update(request, channel):
         return json_error(str(err))
     else:
         return render_json_response(channel_info)
-
-
+        
+        
 # @permission_required('aenclave.can_queue', 'Queue Song')
 def queue_to_front(request):
     form = request.REQUEST
     songs = get_song_list(form)
     if len(songs) != 1:
         raise json_error("Can only queue one song to front")
-
+        
     song = songs[0]
     channel = Channel.default()
     ctrl = channel.controller()
-
+    
     try:
         ctrl.queue_to_front(song)
-
+        
     except ControlError, err:
         if 'getupdate' in form:
             return json_error(str(err))
         else:
             return html_error(request, str(err))
-
+            
     history_entry = PlayHistory(song=song)
     history_entry.save()
 
@@ -171,7 +171,7 @@ def queue_songs(request):
     referrer = request.META.get('HTTP_REFERER', '')
     referrer_path = urlparse.urlparse(referrer).path
     if 'recommendations' in referrer_path:
-        good_recommendations(request)
+        good_recommendations(request)        
     try:
         ctrl.add_songs(songs)
     except ControlError, err:

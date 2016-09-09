@@ -8,7 +8,6 @@ Run this command when there are new video files to add to the database.
 
 import logging
 import os
-import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -60,8 +59,6 @@ class Command(BaseCommand):
 
     def do_movies(self, movies_path):
         for movdir in listdir(movies_path):
-            if not os.path.isdir(movdir):
-                continue
             movdir = os.path.join(movies_path, movdir)
             node = self.make_content_node(movdir, KIND_MOVIE)
             node.save()
@@ -118,26 +115,7 @@ class Command(BaseCommand):
         node.title = title
         node.owner = self.owner
         node.kind = kind
-
-        # Set the creation date to the file modification time.
-        mtime = os.path.getmtime(path)
-        node.created = datetime.datetime.fromtimestamp(mtime)
-
-        # Get the file size or size of files contained within the directory.
-        if os.path.isfile(path):
-            size = os.path.getsize(path)
-        elif os.path.isdir(path):
-            # This could be inefficient if we end up repeatedly walking the same
-            # directory subtree.
-            size = 0
-            for (root, dirs, files) in os.walk(path):
-                size += sum(os.path.getsize(os.path.join(root, f))
-                            for f in files)
-        node.size = size
-
-        try:
-            node.metadata
-        except ContentMetadata.DoesNotExist:
+        if not node.metadata:
             meta = ContentMetadata()
             meta.save()
             node.metadata = meta
