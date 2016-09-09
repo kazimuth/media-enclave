@@ -91,23 +91,6 @@ AENCLAVE_SFTP_UPLOAD_DIR = "/path/to/sftp-upload"
 # directory of WAV or MP3 files.  Nothing bad will happen if it doesn't exist.
 AENCLAVE_DEQUEUE_NOISES_DIR = MEDIA_ROOT + "aenclave/dequeue"
 
-# This is where venclave videos are stored on the filesystem.
-VIDEO_PATH = MEDIA_ROOT + "venclave/videos"
-
-# This is the base URL where venclave videos are served from.  Django is not
-# configured to serve the videos, and you should configure your web server to
-# serve this URL.
-VIDEO_URL = "file://" + VIDEO_PATH
-
-# Where to store the IMDB .list files for venclave.
-IMDB_PATH = _MENCLAVE_ROOT + "imdb_data"
-
-IMDB_THUMBNAIL_WIDTH = 100
-
-# Allows you to turn off and on the ability for random users to create their
-# own accounts.
-VENCLAVE_ALLOW_REGISTRATION = False
-
 ### CUSTOMIZE ME
 ### At the moment, only "mp3" and "m4a"
 SUPPORTED_AUDIO = ("mp3", "m4a")
@@ -194,12 +177,10 @@ INSTALLED_APPS = (
     # The below are the applications included in Media-Enclave.  Usually you
     # will pick one to leave uncommented.
     'menclave.aenclave',  # Audio Enclave
-    'menclave.venclave',  # Video Enclave
     #'menclave.genclave',  # Gaming Enclave
 )
 
 AENCLAVE_ENABLED = 'menclave.aenclave' in INSTALLED_APPS
-VENCLAVE_ENABLED = 'menclave.venclave' in INSTALLED_APPS
 
 #=========================== DATE/TIME FORMATTING ============================#
 
@@ -237,8 +218,5 @@ MEDIA_BUNDLES = ()
 if "menclave.aenclave" in INSTALLED_APPS:
     from aenclave.bundles import get_bundles as get_ae_bundles
     MEDIA_BUNDLES += get_ae_bundles(_MENCLAVE_ROOT)
-if "menclave.venclave" in INSTALLED_APPS:
-    from venclave.bundles import get_bundles as get_ve_bundles
-    MEDIA_BUNDLES += get_ve_bundles(_MENCLAVE_ROOT)
 
 #=============================================================================#
