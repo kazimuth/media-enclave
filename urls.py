@@ -8,8 +8,6 @@ urlpatterns = patterns(
     '',
     (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/audio'}),
     (r'^audio/', include('menclave.aenclave.urls')),
-    (r'^video/', include('menclave.venclave.urls')),
-    #(r'^games/', include('menclave.genclave.urls')),
     (r'^log/', include('menclave.log.urls')),
     (r'^admin/(.*)', admin.site.urls),
 )
