@@ -2,6 +2,7 @@ table.home-content {
     text-align: right;
     margin-left: auto;
     margin-right: auto;
+    width: 700px;
 }
 
 table.home-content td {

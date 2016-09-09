@@ -35,7 +35,7 @@
     <li>
       After you have uploaded everything, click the button below
       {% if not user.is_authenticated %}
-        (after first <a href="{% url menclave-login %}?goto={% url aenclave-sftp-info %}">logging in</a>)
+        (after first <a href="{% url aenclave-login %}?goto={% url aenclave-sftp-info %}">logging in</a>)
       {% endif %}
       and follow the instructions.
     </li>
@@ -47,7 +47,7 @@
         <input type="submit" value="Add uploaded songs"/>
       {% else %}
         <input type="submit" value="Add uploaded songs" disabled="disabled"/>
-        You must <a href="{% url menclave-login %}?goto={% url aenclave-sftp-info %}">log in</a> before adding the songs.
+        You must <a href="{% url aenclave-login %}?goto={% url aenclave-sftp-info %}">log in</a> before adding the songs.
       {% endif %}
     </p>
   </form>

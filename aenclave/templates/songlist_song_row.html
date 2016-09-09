@@ -25,11 +25,12 @@
 <td name="track" class="track editable r">{{song.track_string}}</td>
 <td name="title" class="title editable{% if song.date_added|is_recent %} new{% endif %}">
   {% if no_queuing %}
-    {{song.title|escape}}
+  {{song.title|escape}}
   {% else %}
     <a class="{% if song.last_queued|is_recent:1 %}recent{% else %}queue{% endif %}"
         href="{% url aenclave-queue-songs %}?ids={{song.id}}"
         onclick="return songlist.queue_click(this)">
+
       {{song.title|escape}}
     </a>
   {% endif %}

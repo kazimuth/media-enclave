@@ -25,10 +25,10 @@
           flash_url : "{% url aenclave-scripts "swfupload.swf" %}",
           upload_url: "{% url aenclave-http-upload-fancy-receiver %}",
           post_params: {},
-          file_size_limit : "100 MB",
+          file_size_limit : "256 MB",
           file_types : "{{file_types|join:";"}}",
           file_types_description : "AudioFiles",
-          file_upload_limit : 100,
+          file_upload_limit : 256,
           file_queue_limit : 0,
           custom_settings : {
             progressTarget : "songlist",

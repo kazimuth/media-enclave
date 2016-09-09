@@ -1,5 +1,4 @@
 from django.template import RequestContext
-from django.views.generic.list_detail import object_detail
 
 from menclave.aenclave.models import Song
 from menclave.aenclave.utils import get_song_list
@@ -55,11 +54,6 @@ def view_artist(request, artist_name):
                                 {'artist_name': artist_name,
                                  'song_list': songs},
                                 context_instance=RequestContext(request))
-
-def view_song(request, object_id):
-    return object_detail(object_id=object_id,
-                         queryset=Song.objects,
-                         template_name='song_detail.html')
 
 def list_songs(request):
     songs = get_song_list(request.REQUEST)

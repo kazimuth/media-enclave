@@ -74,7 +74,7 @@ FileProgress.prototype.setError = function () {
   this.progressCell.className = "progressContainer red";
   this.progressCell.childNodes[2].className = "progressBarError";
   this.progressCell.childNodes[2].style.width = "";
-
+  
   var oSelf = this;
   setTimeout(function () {
     oSelf.disappear();
@@ -110,6 +110,10 @@ FileProgress.prototype.toggleCancel = function (show, swfUploadInstance) {
 
 // Fades out and clips away the FileProgress box.
 FileProgress.prototype.disappear = function () {
+
+    jQuery(this.progressRow).hide();
+
+    return;
 
   var reduceOpacityBy = 15;
   var reduceHeightBy = 4;

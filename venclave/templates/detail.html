@@ -1,157 +1,44 @@
 {% extends "venclave/base.html" %}
 {% load venclave_tags %}
-{% load bundler_tags %}
 
 {% block styles %}
-  {{ block.super }}
-  {% css "venclave-styles" "detail.css" %}
-  {% css "venclave-styles" "exhibit.css" %}
+{{ block.super }}
+      <link rel="stylesheet" type="text/css" href="{% url venclave-styles "detail.css" %}"/>
 {% endblock %}
 
 {% block content %}
 
-<table class="content-item">
-  <tr>
-    <td class="poster" rowspan="3">
-      <a ex:href-subcontent="{{ node.path }}">
-        <img src="{{ node.metadata.thumb_uri }}" width="150"/>
-      </a>
-    </td>
-    <td class="content-name">
-      <a ex:href-subcontent="../Movies/{{.label}}/">
-        {% if node.is_movie %}
-          <img src="/video/images/mo_icon.png"/>
-        {% else %}{% if node.is_tv %}
-          <img src="/video/images/se_icon.png"/>
-        {% else %}
-        {% endif %}{% endif %}
-
-        <span class="content-title">{{ node.title }}</span>
-      </a>
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      <ul class="scores">
-        {% if node.metadata.imdb.imdb_uri %}
-        <li class="imdb">
-          <a href="{{ node.metadata.imdb.imdb_uri }}" target="_blank">
-            <img src="/video/images/exhibit/imdb.jpg" height="14">
-            <span class="imdbrating">{{ node.metadata.imdb.rating }}</span>
-          </a>
-        </li>
-        {% endif %}
-        {% if node.metadata.rotten_tomatoes.rt_uri %}
-        <li class="rt">
-          <a href="{{ node.metadata.rotten_tomatoes.rt_uri }}" target="_blank">
-            {% if node.metadata.rotten_tomatoes.percent %}
-            {% if node.metadata.rotten_tomatoes.fresh %}
-              <img width="14" height="14" src="/video/images/exhibit/fresh.gif"/>
-            {% else %}
-              <img width="14" height="14" src="/video/images/exhibit/rotten.gif"/>
-            {% endif %}
-            <span class="rtrating">{{ node.metadata.rotten_tomatoes.percent }}%</span>
-            {% else %}
-            <img width="14" height="14" src="/video/images/exhibit/na.gif"/>
-            <span class="rtna">N/A</span>
-            {% endif %}
-          </a>
-        </li>
-        {% endif %}
-        {% if node.metadata.metacritic.mc_uri %}
-        <li class="mc">
-          <a href="http://www.metacritic.com{{ node.metadata.metacritic.mc_uri }}" target="_blank">
-            <img width="14" height="14" src="/video/images/exhibit/metacritic-{{ node.metadata.metacritic.color }}.gif"/>
-            {% if node.metadata.metacritic.score %}
-              <span class="metacritic-score">{{ node.metadata.metacritic.score }}</span>
-            {% else %}
-              <span class="mcna">N/A</span>
-            {% endif %}
-          </a>
-        </li>
-        {% endif %}
-        {% if node.metadata.nyt_review %}
-        <li class="nyt">
-          <a href="{{ node.metadata.nyt_review }}" target="_blank">
-            <img src="/video/images/exhibit/nyt_logo.png" width="14"
-                height="14" alt="NYT Review Link"/>
-            Review
-          </a>
-        </li>
-        {% endif %}
-        <li class="downloads">
-          <img src="/video/images/exhibit/dl.png" width="14" height="14" alt="Download Count"/>
-          <span>{{ node.downloads }}</span>
-        </li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td class="data">
-      <table>
-        <tr>
-          <td class="imdbdata">
-            <span ex:if-exists=".IMDbGenres" class="genres">
-              <b>Genres:</b> <span ex:content=".IMDbGenres"></span>
-            </span><br ex:if-exists=".IMDbGenres"/>
-
-            <span ex:if-exists=".IMDbRuntime" class="runtime">
-              <b>Runtime:</b> <span ex:content=".IMDbRuntime"></span> min
-            </span><br ex:if-exists=".IMDbRuntime"/>
-
-            <span ex:if-exists=".IMDbDirectors" class="directors">
-              <b>Directed by:</b> <span ex:content=".IMDbDirectors"></span>
-            </span><br/>
-
-            <span ex:if-exists=".IMDbActors" class="actors">
-              <b>Starring:</b> <span ex:content=".IMDbActors"></span>
-            </span><br/>
-
-            <span ex:if-exists=".IMDbPlotOutline" class="outline">
-              <b>Plot:</b> <span ex:content=".IMDbPlotOutline"></span>
-            </span><br ex:if-exists=".IMDbPlotOutline"/>
-
-            <span ex:if-exists=".IMDbReleaseDate" class="releasedate">
-              <b>Release Date:</b> <span ex:content=".IMDbReleaseDate" ex:formats="date { template: 'd MMMM yyyy'}"></span>
-            </span>
-          </td>
-          <td class="rtdata">
-            <span ex:if-exists=".RTDirectors" class="directors">
-              <b>Directed by<b> <span ex:content=".RTDirectors"></span>
-            </span>
-            <br/>
-            <span ex:if-exists=".RTActors" class="actors">
-              <b>Starring</b> <span ex:content=".RTActors"></span>
-            </span>
-            <br/>
-            <span ex:if-exists=".RTWriters" class="writers">
-              <b>Written by</b> <span ex:content=".RTWriters"></span>
-            </span>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
-
-
+<h2>{{ node.title }}</h2>
 
 <table class="detail">
   <tr>
-    <th>Year</th>
-    <td>{{ node.metadata.imdb.release_year }}</td>
+    <th>
+      Year
+    </th>
+    <td>
+      {{ node.metadata.imdb.release_year }}
+    </td>
   </tr>
   <tr>
-    <th>Length</th>
-    <td>{{ node.metadata.imdb.length }} minutes</td>
+    <th>
+      Length
+    </th>
+    <td>
+      {{ node.metadata.imdb.length }} minutes
+    </td>
   </tr>
   <tr>
-    <th>Rating</th>
-    <td>{{ node.metadata.imdb.rating }} out of 5</td>
+    <th>
+      Rating
+    </th>
+    <td>
+      {{ node.metadata.imdb.rating }} out of 5
+    </td>
   </tr>
   <tr>
-    <th>Genres</th>
+    <th>
+      Genres
+    </th>
     <td>
       {% for genre in node.metadata.imdb.genres.all %}
         {{ genre.name }}<br />
@@ -161,18 +48,24 @@
     </td>
   </tr>
   <tr>
-    <th>Director</th>
+    <th>
+      Director
+    </th>
     <td>
       {% for director in node.metadata.imdb.directors.all %}
-        {{ director.name }}<br/>
+        {% reverse_name director.name %}<br />
       {% empty %}
         Directors not available
       {% endfor %}
     </td>
   </tr>
   <tr>
-    <th>Plot summary</th>
-    <td>{{ node.metadata.imdb.plot_summary }}</td>
+    <th>
+      Plot summary
+    </th>
+    <td>
+      {{ node.metadata.imdb.plot_summary }}
+    </td>
   </tr>
 </table>
 

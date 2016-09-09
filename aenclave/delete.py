@@ -8,7 +8,7 @@ from django.core.mail import mail_admins
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
 
-from menclave.login import permission_required
+from menclave.aenclave.login import permission_required
 from menclave.aenclave.utils import get_song_list
 from menclave.aenclave.html import render_html_template
 from menclave.log.util import enable_logging

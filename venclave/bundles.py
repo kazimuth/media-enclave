@@ -15,7 +15,6 @@ def get_bundles(_MENCLAVE_ROOT):
              'base.js',
              'filter.js',
              'video-list.js',
-             'request.js',
          )},
 
         {'type': 'css',
@@ -26,8 +25,6 @@ def get_bundles(_MENCLAVE_ROOT):
              'jquery-ui-1.7.1.custom.css',
              'base.css',
              'browse.css',
-             'exhibit.css',
-             'detail.css',
          )},
 
         {"type": "png-sprite",
@@ -36,8 +33,13 @@ def get_bundles(_MENCLAVE_ROOT):
          "url": "/audio/images/",
          "css_file": _MENCLAVE_ROOT + "venclave/styles/venclave-sprites.css",
          "files": (
+             'browse_title.png',
+             'browse_green.png',
+             'slash.png',
+             'upload_white.png',
+             'mo_icon.png',
+             'tv_icon.png',
              'star_yellow_full.png',
              'star_yellow_half.png',
-             'arrow_blue_up.png',
          )},
     )

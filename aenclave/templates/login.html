@@ -12,7 +12,7 @@
 {% block content %}
   {% if user.is_authenticated %}
     <p>You are already logged in as <tt>{{user.username}}</tt>.</p>
-    <p>If you&rsquo;re someone else, you should <a href="{% url menclave-logout %}?goto={% url menclave-login %}">log in</a> as another user.</p>
+    <p>If you&rsquo;re someone else, you should <a href="{% url aenclave-logout %}?goto={% url aenclave-login %}">log in</a> as another user.</p>
   {% else %}
     <div class="login">
       {% if error_message %}

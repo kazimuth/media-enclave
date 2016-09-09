@@ -1,0 +1,13 @@
+{% extends "aenclave/header_base.html" %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <p>You are logged in as <tt>{{user.username}}</tt>.</p>
+    <p>You {{user.is_staff|yesno:"are,ain't"}} a staff member.</p>
+    <p>You {{user.is_superuser|yesno:"are,ain't"}} a superhero.</p>
+    <p>You may or may not want to <a href="{% url aenclave-logout %}?goto={% url aenclave-user-debug %}">logout</a>.</p>
+  {% else %}
+    <p>You are an anonymous user.</p>
+    <p>You may want to <a href="{% url aenclave-login %}?goto={% url aenclave-user-debug %}">log in</a>.</p>
+  {% endif %}
+{% endblock %}

@@ -8,7 +8,7 @@ from django.db.models import Count, Q
 from django.http import Http404, HttpResponseRedirect
 
 from menclave.aenclave import json_response
-from menclave.login import permission_required
+from menclave.aenclave.login import permission_required
 from menclave.aenclave.html import render_html_template, html_error
 from menclave.aenclave.xml import render_xml_to_response
 from menclave.aenclave.models import Playlist, PlaylistEntry, Song

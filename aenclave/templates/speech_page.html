@@ -8,7 +8,7 @@
 <textarea id='jsgfarea' cols='80' rows='15'>
 #JSGF V1.0;
 grammar EnglishSandboxExample;
-public <top> = <prefixes> <commands>;
+public <top> = [<prefixes>] <commands>;
 <commands> = (
 	  (queue {[command=queue]}| play {[command=play]}) [song] <songs> | <controls>
 	);

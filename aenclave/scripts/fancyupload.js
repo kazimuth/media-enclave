@@ -83,11 +83,11 @@ function uploadStart(file) {
 
 function uploadProgress(file, bytesLoaded, bytesTotal) {
   try {
-    var percent = Math.ceil((bytesLoaded / bytesTotal) * 100);
+      //var percent = Math.ceil((bytesLoaded / bytesTotal) * 100);
 
-    var progress = new FileProgress(file, this.customSettings.progressTarget);
-    progress.setProgress(percent);
-    progress.setStatus("Uploading...");
+      //var progress = new FileProgress(file, this.customSettings.progressTarget);
+      //progress.setProgress(percent);
+      //progress.setStatus("Uploading...");
 
   } catch (ex) {
     this.debug(ex);
@@ -96,7 +96,6 @@ function uploadProgress(file, bytesLoaded, bytesTotal) {
 
 function uploadSuccess(file, serverData) {
   try {
-
     var progress = new FileProgress(file, this.customSettings.progressTarget);
     progress.setComplete();
     progress.setStatus("Complete.");
@@ -104,6 +103,7 @@ function uploadSuccess(file, serverData) {
 
     // Insert the response row into the songlist.
     songlist.insert_row("<tr>" + serverData + "</tr>");
+ 
   } catch (ex) {
     this.debug(ex);
   }

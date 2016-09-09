@@ -38,8 +38,12 @@ def annotate_metadata(song):
     info = {}
     ext = path.lower()[len(path)-3:]
 
-    # Mutagen doesn't like unicode 
-    path_latin1 = path.encode('latin1')
+    # TODO(XXX) Decoding is apparently not always the right thing to
+    # do here.
+    logging.info("annotate_metadata working on %s, type: %s" 
+                 % (path, repr(type(path))))
+    path_decode = path #path.decode('utf8')
+    logging.debug("Decoded path to %s" % path_decode)
 
     # TODO(XXX) Once mutagen 1.17 makes it everywhere we can do away
     # with this bother with extensions and figuring out the file
@@ -52,8 +56,9 @@ def annotate_metadata(song):
     if ext == "mp3":
         # Now, open up the MP3 file and save the tag data into the database.
         try:
-            audio = MP3(path_latin1, ID3=EasyID3)
+            audio = MP3(path_decode, ID3=EasyID3)
         except Exception, e:
+            logging.error("Error while parsing ID3 tags: %s" % e)
             logging.exception(e.message)
             audio = {}
         try: info['title'] = audio['title'][0]
@@ -73,7 +78,7 @@ def annotate_metadata(song):
     elif ext == "m4a":
         # Now, open up the MP3 file and save the tag data into the database.
         try:
-            audio = MP4(path_latin1)
+            audio = MP4(path_decode)
         except Exception, e:
             logging.exception(e.message)
             audio = {}
@@ -142,6 +147,7 @@ def process_song(name, content):
     # Save the song into the database -- we'll fix the tags in a moment.
     song = Song(track=0, time=0)
     song.audio.save(name, content)
+    song.save()
     audio = annotate_metadata(song)
     annotate_checksum(song)
     song.save()
